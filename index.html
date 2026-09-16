@@ -172,7 +172,7 @@ function writeBak(){if(MODE!=="local")return;
 var S=readAll();
 if(!S||!S.d){var bk=readBak();if(bk)S=bk.s;}   /* الأساسي باظ؟ رجّع من النسخة الاحتياطية */
 if(!S)S={v:3,w:{},ws:{},d:{},b:{}};
-["w","ws","d","b"].forEach(function(k){if(!S[k])S[k]={};});
+["w","ws","hp","d","b"].forEach(function(k){if(!S[k])S[k]={};});
 
 /* ===== ترقية v2 ← v3: بتعدّل في مكانها، مفيش استبدال ولا مسح ===== */
 function migrate(){
@@ -311,6 +311,14 @@ var PLAN={
 };
 
 /* تمرين قاع الحوض — بيتعرض في شاشة النهارده مش في الجيم */
+/* أجهزة الكارديو — نفس خانة التسجيل، بنسجّل بس إنت استخدمت إيه */
+var CARDIO_M=[
+ ["bike","🚲 دراجة","مقاومة تخليك تعرق وتتنفس بعمق. ركبتك متتفردش بالكامل تحت — ظبّط الكرسي."],
+ ["elliptical","🌀 إليبتيكال","أأمن حاجة على الركبة. امسك الإيدين وحركهم — بيرفع الحرق."],
+ ["treadmill","⛰️ مشاية مائلة","<b>مشي مش جري.</b> سرعة ٥–٥.٥ وميل ١٠–١٢٪. <b>متمسكش الحواجز</b> — المسك بيقلل الحرق للنص."],
+ ["rower","🚣 تجديف","٦٠٪ من الدفع من رجلك مش دراعك. ضهرك مفرود. بيشغّل الجسم كله."],
+ ["stair","🪜 ستيرماستر","أعلى حرق في الجزء ده — <b>بس أعلى ضغط على الركبة كمان</b>. ابدأ ٥ دقايق وشوف، وأي شد = انزل."]];
+
 var PELVIC={k:"Pelvic_Tilt_Into_Bridge",ar:"تمرين قاع الحوض (كيجل)",
  why:"الانتصاب في الأساس مسألة دورة دموية وعضلات. في تجربة عشوائية، <b>٦٧٪</b> من الرجالة اللي عملوا التمرين ده اتحسنوا بعد ١٢ أسبوع، مقابل <b>٣٠٪</b> اللي اداهم نصايح نمط حياة بس. وبيساعد كمان في التحكم والتحمل.",
  find:["<b>لقّي العضلة الأول:</b> هي العضلة اللي بتوقف بيها البول في النص. اقبضها مرة واحدة عشان تحس بمكانها — <b>وبعدها متعملش التمرين وأنت بتبول أبداً</b>.",
@@ -371,6 +379,16 @@ function day(dt){var k=ymd(dt);if(!S.d[k])S.d[k]={ex:{},hab:{},meal:{},water:0,c
  var o=S.d[k];if(!o.ex)o.ex={};if(!o.hab)o.hab={};if(!o.meal)o.meal={};
  if(o.water==null)o.water=0;if(o.cardio==null)o.cardio=0;return o;}
 function curDate(){return addD(today(),weekOff*7+dayOff);}
+function goDay(dt){weekOff=0;dayOff=Math.round((noon(dt)-today())/864e5);scr="train";open={};
+ window.scrollTo(0,0);render();}
+function habDone(o){var n=0;for(var i=0;i<HABITS.length;i++)if(o.hab[i])n++;return n;}
+function mealDone(o){var n=0;for(var i=0;i<MEALS.length;i++)if(o.meal[MEALS[i].id])n++;return n;}
+/* أيام فاتت من غير تسجيل — عشان ماتضيعش */
+function missed(){var out=[];
+ for(var i=1;i<=3;i++){var dt=addD(today(),-i),k=ymd(dt),o=S.d[k];
+  if(!o)continue;
+  if(habDone(o)===0&&mealDone(o)===0&&!o.water)out.push(dt);}
+ return out;}
 function weekCardio(off){
  var base=addD(today(),off*7),start=addD(base,-base.getDay()),n=0;
  for(var i=0;i<7;i++){var k=ymd(addD(start,i));if(S.d[k]&&S.d[k].cardio)n+=+S.d[k].cardio;}
@@ -380,6 +398,7 @@ function weekCardio(off){
 function lastWeight(){var k=Object.keys(S.w).sort();return k.length?S.w[k[k.length-1]]:null;}
 function firstWeight(){var k=Object.keys(S.w).sort();return k.length?S.w[k[0]]:null;}
 function lastWaist(){var k=Object.keys(S.ws).sort();return k.length?S.ws[k[k.length-1]]:null;}
+function lastHip(){var k=Object.keys(S.hp).sort();return k.length?S.hp[k[k.length-1]]:null;}
 function firstWaist(){var k=Object.keys(S.ws).sort();return k.length?S.ws[k[0]]:null;}
 function sessions(){var n=0;
  for(var k in S.d){var o=S.d[k],c=0;
@@ -446,9 +465,68 @@ function el(t,c,h){var n=document.createElement(t);if(c)n.className=c;if(h!=null
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){
  return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
+/* ===== كروت التسجيل — بتشتغل على أي يوم ===== */
+function cardHabits(dt,lbl){
+ var o=day(dt),c=el("div","card"),n=habDone(o);
+ var t=el("div","ttl");
+ t.appendChild(el("span",null,"✅ عادات "+lbl));
+ var all=el("button","btn"+(n===HABITS.length?" p":""),n===HABITS.length?"شيل الكل":"كله ✓");
+ all.onclick=function(){var on=n<HABITS.length;
+  for(var i=0;i<HABITS.length;i++)o.hab[i]=on?true:false;
+  checkBadges();save();render();};
+ t.appendChild(all);c.appendChild(t);
+ c.appendChild(el("div","kv",n+" من "+HABITS.length));
+ c.appendChild(el("div","bar","<i style='width:"+(n/HABITS.length*100)+"%'></i>"));
+ HABITS.forEach(function(h,i){
+  var r=el("div","row"),b=el("button","chk"+(o.hab[i]?" on":""),o.hab[i]?"✓":"");
+  b.onclick=function(){o.hab[i]=!o.hab[i];checkBadges();save();render();};
+  r.appendChild(b);r.appendChild(el("p",null,esc(h[0])+"<small>"+esc(h[1])+"</small>"));
+  c.appendChild(r);});
+ return c;}
+
+function cardMeals(dt,lbl){
+ var o=day(dt),c=el("div","card"),n=mealDone(o);
+ var t=el("div","ttl");
+ t.appendChild(el("span",null,"🍽️ وجبات "+lbl));
+ var all=el("button","btn"+(n===MEALS.length?" p":""),n===MEALS.length?"شيل الكل":"كله ✓");
+ all.onclick=function(){var on=n<MEALS.length;
+  MEALS.forEach(function(m){o.meal[m.id]=on?true:false;});save();render();};
+ t.appendChild(all);c.appendChild(t);
+ c.appendChild(el("div","kv",n+" من "+MEALS.length+" · التفاصيل في شاشة الأكل"));
+ c.appendChild(el("div","bar","<i style='width:"+(n/MEALS.length*100)+"%'></i>"));
+ MEALS.forEach(function(m){
+  var r=el("div","row"),b=el("button","chk"+(o.meal[m.id]?" on":""),o.meal[m.id]?"✓":"");
+  b.onclick=function(){o.meal[m.id]=!o.meal[m.id];save();render();};
+  r.appendChild(b);r.appendChild(el("p",null,esc(m.t)+"<small>"+esc(m.k)+"</small>"));
+  c.appendChild(r);});
+ return c;}
+
+function cardWater(dt,lbl){
+ var o=day(dt),c=el("div","card");
+ c.appendChild(el("div","ttl","<span>💧 مية "+esc(lbl)+"</span><span class='kv'>"+
+  (o.water*BOTTLE_L).toFixed(1)+" / "+(BOTTLES*BOTTLE_L).toFixed(1)+" لتر</span>"));
+ var wr=el("div","water");
+ for(var i=0;i<BOTTLES;i++)(function(i){
+  var b=el("button","cup"+(i<o.water?" on":""),i<o.water?"✓":"");
+  b.setAttribute("aria-label","إزازة "+(i+1));
+  b.onclick=function(){o.water=(i<o.water)?i:i+1;save();render();};
+  wr.appendChild(b);})(i);
+ c.appendChild(wr);
+ c.appendChild(el("div","kv","كل مربع = إزازة نص لتر · الهدف ٣ لتر"));
+ return c;}
+
 /* ===== النهارده ===== */
 function scHome(){
  var w=el("div"),dt=today(),o=day(dt),p=PLAN[dt.getDay()];
+ var ms=missed();
+ if(ms.length){var mc=el("div","card");
+  mc.appendChild(el("div","ttl","⏪ أيام لسه ماتسجلتش"));
+  mc.appendChild(el("div","mini","التسجيل مفتوح لأي يوم — مش النهارده بس. دوس على اليوم وسجّله."));
+  var mr=el("div","qrow");
+  ms.forEach(function(d2){var bt=el("button","btn",DOWN[d2.getDay()]+" "+d2.getDate()+"/"+(d2.getMonth()+1));
+   bt.onclick=function(){goDay(d2);};mr.appendChild(bt);});
+  mc.appendChild(mr);w.appendChild(mc);}
+
  var c=el("div","card");
  c.appendChild(el("div","ttl","<span>"+esc(DOWN[dt.getDay()])+" — "+(p.t?esc(p.t):"راحة")+"</span>"));
  c.appendChild(el("div","mini",p.fact||p.rest||""));
@@ -497,7 +575,19 @@ function scHome(){
  var sb=el("button","btn p","حفظ");
  sb.onclick=function(){var v=parseFloat(si.value);if(v>0){S.ws[ymd(dt)]=v;checkBadges();save();render();}};
  q2.appendChild(si);q2.appendChild(sb);sw.appendChild(q2);
- if(!lws)sw.appendChild(el("div","note","<b>لسه مافيش ولا قياس.</b> قيس عند السرة بشريط، ومرة واحدة قيس الورك كمان. الميزان بيتحرك بالمية والملح — الشريط بيقيس الكرش نفسه."));
+ var lhp=lastHip();
+ var q3=el("div","qrow"),hi=document.createElement("input");
+ hi.type="number";hi.step="0.5";hi.placeholder=lhp?("الورك "+lhp+" سم"):"الورك سم";
+ hi.setAttribute("aria-label","محيط الورك");
+ var hb=el("button","btn","حفظ الورك");
+ hb.onclick=function(){var v=parseFloat(hi.value);if(v>0){S.hp[ymd(dt)]=v;save();render();}};
+ q3.appendChild(hi);q3.appendChild(hb);sw.appendChild(q3);
+ if(lws&&lhp){var whr=lws/lhp;
+  sw.appendChild(el("div","note"+(whr<=0.90?" ok":""),
+   "<b>نسبة الخصر للورك: "+whr.toFixed(2)+"</b> (الطبيعي ٠.٨٠–٠.٩٠). "+
+   (whr>0.90?"لسه فوق — دي أدق مؤشر على دهون البطن من الميزان.":"دخلت النطاق الطبيعي.")));}
+ else if(!lws)sw.appendChild(el("div","note","<b>قيس عند السرة بشريط</b> — نفس النقطة كل مرة، الصبح قبل الأكل، وبعد زفير عادي من غير ما تشد بطنك."));
+ else sw.appendChild(el("div","note","<b>ناقص الورك.</b> قيسه مرة واحدة عند أعرض نقطة والنسبة هتتحسب لوحدها."));
  w.appendChild(sw);
 
  var ph=phase(),sc=el("div","card");
@@ -513,18 +603,7 @@ function scHome(){
  pc.appendChild(el("div","note","<b>مش محتاج تزنه.</b> بيضة ≈ ٦ ج • كوب فول ≈ ١٣ ج • نص فرخة ≈ ٦٠ ج • علبة تونة ≈ ٢٥ ج • بروتين بار ≈ ٢٠ ج • كوب لبن ≈ ٨ ج • علبة زبادي ≈ ٧ ج."));
  w.appendChild(pc);
 
- var wat=el("div","card");
- wat.appendChild(el("div","ttl","<span>💧 المية</span><span class='kv'>"+
-  (o.water*BOTTLE_L).toFixed(1)+" / "+(BOTTLES*BOTTLE_L).toFixed(1)+" لتر</span>"));
- var wr=el("div","water");
- for(var i=0;i<BOTTLES;i++)(function(i){
-  var b=el("button","cup"+(i<o.water?" on":""),i<o.water?"✓":"");
-  b.setAttribute("aria-label","إزازة "+(i+1));
-  b.onclick=function(){o.water=(i<o.water)?i:i+1;save();render();};
-  wr.appendChild(b);})(i);
- wat.appendChild(wr);
- wat.appendChild(el("div","kv","كل مربع = إزازة نص لتر · الهدف ٣ لتر"));
- w.appendChild(wat);
+ w.appendChild(cardWater(dt,"النهارده"));
 
  var pv=el("div","card");
  pv.appendChild(el("div","ttl","<span>🔻 "+esc(PELVIC.ar)+"</span><span class='more'>"+
@@ -551,14 +630,8 @@ function scHome(){
   pv.appendChild(pp);}
  w.appendChild(pv);
 
- var hc=el("div","card");
- hc.appendChild(el("div","ttl","✅ عادات اليوم"));
- HABITS.forEach(function(h,i){
-  var r=el("div","row"),b=el("button","chk"+(o.hab[i]?" on":""),o.hab[i]?"✓":"");
-  b.onclick=function(){o.hab[i]=!o.hab[i];checkBadges();save();render();};
-  r.appendChild(b);r.appendChild(el("p",null,esc(h[0])+"<small>"+esc(h[1])+"</small>"));
-  hc.appendChild(r);});
- w.appendChild(hc);
+ w.appendChild(cardMeals(dt,"النهارده"));
+ w.appendChild(cardHabits(dt,"النهارده"));
  return w;}
 
 /* ===== التمرين ===== */
@@ -601,9 +674,15 @@ function scTrain(){
    mb.onclick=function(){var a=parseFloat(wi.value),b=parseFloat(si.value);
     if(a>0)S.w[ymd(dt)]=a;if(b>0)S.ws[ymd(dt)]=b;checkBadges();save();render();};
    mq.appendChild(wi);mq.appendChild(si);mq.appendChild(mb);c.appendChild(mq);
+   c.appendChild(el("div","note","<b>نفس النقطة كل مرة:</b> عند السرة، الصبح قبل الأكل، بعد زفير عادي من غير ما تشد بطنك. الشريط ملزوق مش مزنوق. أول أسبوعين بتظبط الطريقة — الفرق بين قياسين متقاربين غالباً طريقة مش دهون."));
    c.appendChild(el("div","note","<b>محيط الوسط أهم من الميزان.</b> الميزان بيتحرك بالمية والملح والنوم، والشريط بيقيس الكرش نفسه. فيه أسابيع الوزن هيقف والشريط ينزل — وده نجاح مش ثبات."));
   }
-  w.appendChild(c);return w;}
+  w.appendChild(c);
+  var lbl0=(ymd(dt)===ymd(today()))?"النهارده":(esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()]));
+  w.appendChild(cardHabits(dt,lbl0));
+  w.appendChild(cardMeals(dt,lbl0));
+  w.appendChild(cardWater(dt,lbl0));
+  return w;}
 
  c.appendChild(el("div","mini",p.fact));
  if(p.upper)c.appendChild(el("div","note bad",
@@ -652,6 +731,17 @@ function scTrain(){
     im.src=IMG+x.k+"/"+i+".jpg";im.onerror=function(){im.style.display="none";};
     f.appendChild(im);f.appendChild(el("figcaption",null,cap));sh.appendChild(f);});
    pn.appendChild(sh);
+   if(x.cardio){
+    pn.appendChild(el("div","grp","إنت استخدمت إيه النهارده؟"));
+    var mrow=el("div","sets");
+    CARDIO_M.forEach(function(m){
+     var mb=el("button","btn"+(st.m===m[0]?" p":""),m[1]);
+     mb.onclick=function(){st.m=(st.m===m[0])?null:m[0];save();render();};
+     mrow.appendChild(mb);});
+    pn.appendChild(mrow);
+    var sel=null;for(var mi=0;mi<CARDIO_M.length;mi++)if(CARDIO_M[mi][0]===st.m)sel=CARDIO_M[mi];
+    pn.appendChild(el("div","note"+(st.m==="stair"?" bad":""),
+     sel?("<b>"+sel[1]+":</b> "+sel[2]):"<b>كلهم بيتحسبوا في الـ١٦٠ دقيقة.</b> اختار اللي استخدمته وهنشوف مع الوقت إيه اللي بتعمله فعلاً وإيه اللي بيدي أحسن نتيجة."));}
    var ul=el("ul","cues");x.cues.forEach(function(q){ul.appendChild(el("li",null,q));});
    pn.appendChild(ul);
    if(x.alt)pn.appendChild(el("div","alt","<b>بديل:</b> "+esc(x.alt)));
@@ -663,6 +753,13 @@ function scTrain(){
  c.appendChild(el("div","note",
   "<b>التدرج:</b> لما تعمل أعلى رقم في المدى وأنت حاسس إنك تقدر على اتنين زيادة — زوّد الوزن. الرقم اللي في المربع هو التكرار المطلوب، والخانة اللي جنبه للوزن."));
  w.appendChild(c);
+
+ var lbl=(ymd(dt)===ymd(today()))?"النهارده":(esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()]));
+ if(ymd(dt)!==ymd(today()))w.appendChild(el("div","note ok",
+  "<b>إنت بتسجّل يوم "+lbl+".</b> التسجيل مفتوح لأي يوم — لو فاتك يوم، ارجعله وسجّله عادي."));
+ w.appendChild(cardHabits(dt,lbl));
+ w.appendChild(cardMeals(dt,lbl));
+ w.appendChild(cardWater(dt,lbl));
 
  if(p.upper){var shc=el("div","card");
   shc.appendChild(el("div","ttl","🔔 الكتف طقطق النهارده؟"));
@@ -743,6 +840,8 @@ function scProg(){
  var c0=el("div","card");
  c0.appendChild(el("div","ttl","📏 محيط الوسط"));
  c0.appendChild(chartOf(S.ws,null,"#5CC8FF","سم"));
+ var lw2=lastWaist(),lh2=lastHip();
+ if(lw2&&lh2)c0.appendChild(el("div","mini","نسبة الخصر للورك: <b>"+(lw2/lh2).toFixed(2)+"</b> · الطبيعي ٠.٨٠–٠.٩٠"));
  c0.appendChild(el("div","note ok","<b>الرسمين دول مش بيقولوا نفس الحاجة.</b> الوزن بيتحرك بالمية والملح والنوم. الوسط بيقيس الكرش نفسه. لو الوزن واقف والوسط نازل — <b>ده أحسن أسبوع في الخطة</b>، يعني دهون نزلت وعضل اتبنى."));
  w.appendChild(c0);
  var g=el("div","grid2"),ph=phase();

@@ -63,6 +63,9 @@ h1{font-size:23px;font-weight:900;letter-spacing:-.5px}
 .set{display:flex;align-items:center;gap:4px;background:var(--surf2);border:1px solid var(--line);
  border-radius:9px;padding:4px 6px}
 .set input{width:46px;background:transparent;border:none;color:var(--ink);text-align:center;font-size:14px;font-weight:700}
+.set input::placeholder{font-size:11px;font-weight:500;color:var(--dim)}
+.set:has(input[aria-label="دقايق الكارديو الفعلية"]){flex:1}
+.set input[aria-label="دقايق الكارديو الفعلية"]{width:100%;min-width:96px;text-align:right;padding-right:4px}
 .set input::placeholder{color:var(--dim);font-weight:400}
 .setchk{min-width:34px;height:30px;padding:0 5px;border-radius:8px;border:2px solid var(--line);
  background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-weight:700;flex-shrink:0}
@@ -119,6 +122,9 @@ h1{font-size:23px;font-weight:900;letter-spacing:-.5px}
 .navbtn{flex:1;background:none;border:none;padding:9px 0 8px;color:var(--dim);font-size:10px;font-weight:700;cursor:pointer}
 .navbtn i{font-style:normal;font-size:19px;display:block;margin-bottom:2px}
 .navbtn.on{color:var(--acid)}
+.tip{background:rgba(198,255,58,.07);border-right:3px solid var(--acid);border-radius:0 8px 8px 0;
+ padding:8px 11px;margin-top:9px;font-size:12.5px;line-height:1.6;color:var(--ink)}
+.tip b{color:var(--acid)}
 .subwrap{display:flex;gap:6px;align-items:center;margin:-2px 0 10px 38px}
 .subin{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;
  color:var(--ink);padding:8px 10px;font-size:12.5px;font-family:inherit;min-width:0}
@@ -235,8 +241,8 @@ var PLAN={
    cues:["كوعك ملزوق في جنبك ومايتحركش لقدام","وقف ثانية فوق واعصر","نزّل ببطء — <b>الرجعة نص التمرين</b>"],alt:"بايسبس بالبار"},
   {k:"Hammer_Curls",ar:"هامر بالدامبل",en:"Hammer Curl",sets:2,reps:"١٢",
    cues:["كف إيدك مواجه لجسمك طول الحركة","بيشتغل على سُمك الدراع مش الشكل بس","متهزش جسمك"],alt:"هامر بالحبل"},
-  {g:"بطن",k:"Cable_Crunch",ar:"طي البطن بالكابل",en:"Cable Crunch",sets:3,reps:"١٥",
-   cues:["اطوي من ضهرك مش من وركك","<b>الحمل هنا هو اللي بيبني العضلة</b> — الكرانش من غير وزن مش كفاية","اعصر في الآخر ثانية"],alt:"كرانش على الأرض"},
+  {g:"بطن",k:"Cable_Crunch",ar:"طي البطن بالكابل (الجهاز اللي بتركع عليه)",en:"Cable Crunch",sets:3,reps:"١٥",
+   cues:["<b>ده هو نفسه الجهاز اللي بتركع عليه وتقفل بطنك بوزن — مش بديل، ده التمرين بعينه.</b>","<b>اطوي من ضهرك مش من وركك</b> — تخيل إنك بتقرّب صدرك من حوضك، مش بتنزل بجسمك كله","<b>وركك ثابت في مكانه</b> — لو بتتحرك لقدام ولورا يبقى بتشد من الورك مش من البطن","الحمل هنا هو اللي بيبني العضلة — الكرانش من غير وزن مش كفاية","اعصر في الآخر ثانية وارجع ببطء"],alt:"كرانش على الأرض بوزن على صدرك"},
   {k:"Plank",ar:"بلانك",en:"Plank",sets:3,reps:"٣٠-٤٥ ثانية",
    cues:["جسمك خط مستقيم من كتفك لكعبك","<b>متطلعش مؤخرتك ومتنزلهاش</b>","اشد بطنك ومؤخرتك مع بعض"],alt:"بلانك على الركب",nw:true},
   {g:"كارديو",k:"Elliptical_Trainer",ar:"دراجة أو إليبتيكال",en:"Bike / Elliptical",sets:1,reps:"٢٠ دقيقة",cardio:20,
@@ -317,19 +323,19 @@ var PLAN={
    cues:["<b>بعد الحديد</b>","شدة متوسطة","مفيش جري"],alt:"مشي مائل على المشاية",nw:true}]},
 
  5:{t:"التحمل والحمل — أهم يوم بونس",bonus:true,sauna:true,key:true,
-  fact:"ده أعلى يوم حرق في الأسبوع، وأقرب يوم للهدف بتاع الكفاءة الجنسية: كارديو بفترات + مؤخرة وحوض + حمل. لو هتعمل يوم بونس واحد بس في الأسبوع — خليه ده.",ex:[
-  {g:"١ — كارديو بفترات (٤٠ دقيقة)",k:"Elliptical_Trainer",ar:"فترات على الدراجة أو الإليبتيكال",en:"Interval Cardio",sets:1,reps:"٤٠ دقيقة",cardio:40,
-   cues:["<b>٥ دقايق إحماء</b> شدة خفيفة","بعدها <b>٨ جولات: دقيقة شدة عالية / دقيقتين هادي</b> = ٢٤ دقيقة","<b>٥ دقايق تهدئة</b> + ٦ دقايق مشي","«شدة عالية» يعني مش قادر تقول جملة كاملة — مش أقصى حاجة عندك","<b>مفيش جري.</b> على المشاية زوّد <b>الميل</b> مش السرعة","<b>ليه الفترات بالذات؟</b> الشدة العالية المتقطعة بتحسّن بطانة الأوعية الدموية أسرع من الكارديو الثابت — ودي نفس الأوعية اللي الانتصاب معتمد عليها"],alt:"مشي مائل بفترات — ميل ١٢٪ دقيقة / ٦٪ دقيقتين",nw:true},
-  {g:"٢ — المؤخرة والحوض",k:"Barbell_Hip_Thrust",ar:"جسر المؤخرة",en:"Hip Thrust",sets:3,reps:"١٢",
-   cues:["<b>تاني مرة في الأسبوع عن قصد</b> — المؤخرة وقاع الحوض نفس المنطقة، والدم اللي بيوصلها بيوصلهم","<b>الحزام على عظمة الحوض مش على البطن</b>، ادفع من كعبك","اعصر فوق ثانية كاملة — <b>العصرة هي التمرين</b> مش الرفعة","<b>جرّبه هنا لو اتلغبط عليك يوم الاتنين</b> — الجيم بيبقى فاضي أكتر يوم الجمعة"],alt:"جسر المؤخرة على الأرض من غير وزن"},
+  fact:"ترتيب اليوم مقصود: إحماء ٥ د ← حديد ٢٥-٣٠ د ← فترات ٤٠ د. <b>الفترات آخر حاجة عشان تعملها وإنت فاضي، مش عشان تتساب.</b> لو الوقت ضاق، اقص من الحديد مش من الكارديو — الكارديو هو الحدث الرئيسي في اليوم ده.",ex:[
+  {g:"١ — المؤخرة والحوض (٢٥-٣٠ دقيقة)",k:"Barbell_Hip_Thrust",ar:"جسر المؤخرة",en:"Hip Thrust",sets:3,reps:"١٢",
+   cues:["<b>٥ كجم خفيف جداً — ضاعفه الأسبوع ده.</b> لو خلصت ١٢ تكرار وإنت مرتاح، الوزن صغير","<b>تاني مرة في الأسبوع عن قصد</b> — المؤخرة وقاع الحوض نفس المنطقة ونفس الشبكة الدموية","الحزام على عظمة الحوض مش على البطن، وادفع من كعبك","اعصر فوق ثانية كاملة — <b>العصرة هي التمرين</b> مش الرفعة"],alt:"جسر المؤخرة على الأرض من غير وزن"},
   {k:"One-Arm_Kettlebell_Swings",ar:"مرجحة بذراع واحدة",en:"One-Arm Swing",sets:3,reps:"١٢ لكل إيد",
-   cues:["<b>حركة ورك مش حركة دراع</b> — الوزن بيتمرجح بدفعة من المؤخرة","<b>متعليهاش فوق مستوى صدرك</b> — عشان الكتف","ضهرك مفرود ومتقوّسش في الآخر","<b>مفيش قفز</b> — رجلك ثابتة على الأرض طول الوقت","ابدأ بوزن خفيف جداً لحد ما الحركة تظبط"],alt:"نفس الحركة بدامبل واحد بإيدين"},
-  {g:"٣ — الحمل والظهر",k:"Farmers_Walk",ar:"مشية الفلاح",en:"Farmer's Walk",sets:3,reps:"٤٠ متر",
-   cues:["دامبل تقيل في كل إيد وامشي","كتفك لورا وضهرك مفرود — <b>متمليش على جنب</b>","بيبني قبضة وكور وتحمل ووقفة في تمرين واحد","<b>لو خلصت الـ٤٠ متر بسهولة — الوزن خفيف</b>"],alt:"حمل الدامبل واقف ٤٠ ثانية"},
+   cues:["<b>٤ كجم خفيف — ضاعفه.</b> المرجحة بتاخد وزن أتقل من اللي تتخيله","<b>حركة ورك مش حركة دراع</b> — الوزن بيتمرجح بدفعة من المؤخرة","<b>متعليهاش فوق مستوى صدرك</b> — عشان الكتف","<b>مفيش قفز</b> — رجلك ثابتة على الأرض طول الوقت"],alt:"نفس الحركة بدامبل واحد بإيدين"},
+  {g:"٢ — الجذع وأسفل الضهر",k:"Russian_Twist",ar:"اللفة الروسية",en:"Russian Twist",sets:3,reps:"٢٠ (١٠ لكل جنب)",
+   cues:["<b>بديل مشية الفلاح</b> — نفس شغل الجذع، بس بالعدّ مش بالمتر","قاعد ومايل لورا شوية، امسك دامبل أو صابة بإيديك","<b>لفّ من جذعك مش من دراعك</b> — الوزن بيعدّي من جنب لجنب ببطء","<b>ضهرك مفرود ومتقوّسش</b> — لو ضهرك اتقوّس، خفّف الوزن","الجذع فيه ١٥ كجم دهون عندك — دي العضلة اللي تحتها"],alt:"نفس الحركة من غير وزن ورجلك على الأرض"},
   {k:"Hyperextensions_Back_Extensions",ar:"مد الظهر",en:"Back Extension",sets:3,reps:"١٢",
    cues:["اطلع لحد ما جسمك يبقى خط مستقيم — <b>متقوّسش لفوق</b>","الحركة من الورك مش من الضهر","بيقوي أسفل الضهر والمؤخرة — والاتنين بيشتغلوا مع قاع الحوض"],alt:"سوبرمان على الأرض"},
   {k:"Superman",ar:"سوبرمان",en:"Superman",sets:2,reps:"١٢",
-   cues:["راقد على بطنك، ارفع دراعك ورجلك المتعاكسين","وقف ثانيتين فوق","بيكمّل السلسلة الخلفية من غير أي حمل على الركبة"],alt:"ارفع الرجلين بس",nw:true}]},
+   cues:["راقد على بطنك، ارفع دراعك ورجلك المتعاكسين","وقف ثانيتين فوق","بيكمّل السلسلة الخلفية بصفر حمل على الركبة"],alt:"ارفع الرجلين بس",nw:true},
+  {g:"٣ — الفترات (٤٠ دقيقة) — ده الحدث الرئيسي",k:"Elliptical_Trainer",ar:"فترات على الدراجة أو الإليبتيكال",en:"Interval Cardio",sets:1,reps:"٤٠ دقيقة",cardio:40,
+   cues:["<b>٥ دقايق إحماء</b> شدة خفيفة","<b>٨ جولات: دقيقة شدة عالية / دقيقتين هادي</b> = ٢٤ دقيقة","<b>٥ دقايق تهدئة</b> + ٦ دقايق مشي هادي","«شدة عالية» = مش قادر تقول جملة كاملة. مش أقصى حاجة عندك","<b>مفيش جري.</b> على المشاية زوّد <b>الميل</b> مش السرعة","<b>ليه ده أهم جزء في اليوم؟</b> الشدة العالية المتقطعة بتحسّن بطانة الأوعية الدموية أسرع من الكارديو الثابت — ونفس الأوعية دي هي اللي الانتصاب معتمد عليها","<b>ولو الوقت ضاق:</b> اعمل ٤ جولات بدل ٨ (٢٠ دقيقة) — أحسن بكتير من صفر"],alt:"مشي مائل بفترات — ميل ١٢٪ دقيقة / ٦٪ دقيقتين",nw:true}]},
 
  6:{t:null,rest:"يوم القياس والراحة الكاملة. الاستشفاء بيحصل وأنت نايم، مش وأنت بتتمرن.",measure:true}
 };
@@ -646,8 +652,13 @@ function scHome(){
  hi.setAttribute("aria-label","محيط الورك");
  var hb=el("button","btn","حفظ الورك");
  hb.onclick=function(){var v=parseFloat(hi.value);if(v>0){S.hp[ymd(dt)]=v;save();render();}};
+ var hbad=(lhp&&lws&&(lhp<70||lhp<lws-15));
  q3.appendChild(hi);q3.appendChild(hb);sw.appendChild(q3);
- if(lws&&lhp){var whr=lws/lhp;
+ if(hbad){sw.appendChild(el("div","note bad",
+   "<b>رقم الورك ("+lhp+" سم) مش منطقي.</b> محيط ٥٩ سم يعني دايرة قطرها ١٩ سم — ده مقاس فخذ مش مقاس حوض. "+
+   "<b>الأغلب إن الشريط ما لفّش دورة كاملة، أو إنك قست الفخذ.</b> قيس تاني: الشريط بيلف حوالين مؤخرتك كلها ويرجع لنفس النقطة، عند <b>أعرض نقطة</b> وإنت واقف ورجلك مع بعض. "+
+   "الرقم المتوقع من جهاز الـInBody ≈ <b>١٠٢ سم</b>، والنسبة مش هتتحسب لحد ما يتصحح."));}
+ else if(lws&&lhp){var whr=lws/lhp;
   sw.appendChild(el("div","note"+(whr<=0.90?" ok":""),
    "<b>نسبة الخصر للورك: "+whr.toFixed(2)+"</b> (الطبيعي ٠.٨٠–٠.٩٠). "+
    (whr>0.90?"لسه فوق — دي أدق مؤشر على دهون البطن من الميزان.":"دخلت النطاق الطبيعي.")));}
@@ -777,7 +788,7 @@ function scTrain(){
    var b=el("button","setchk"+(st.done[i]?" on":""),st.done[i]?"✓":shortReps(x));
    b.setAttribute("aria-label","مجموعة "+(i+1)+" "+x.ar+" — "+x.reps);
    b.onclick=function(){st.done[i]=!st.done[i];
-    if(x.cardio)o.cardio=st.done[i]?(+o.cardio+x.cardio):Math.max(0,o.cardio-x.cardio);
+    if(x.cardio)recalcCardio(dt);
     checkBadges();save();render();};
    s.appendChild(b);
    if(!x.nw&&!x.cardio){
@@ -786,8 +797,20 @@ function scTrain(){
     if(x.k==="Pushups")ip.placeholder="عدد";
     ip.oninput=function(){st.w[i]=ip.value;save();};
     s.appendChild(ip);}
+   if(x.cardio){
+    var mi=document.createElement("input");mi.inputMode="decimal";
+    mi.placeholder="دقايق فعلية";mi.value=st.mins||"";
+    mi.setAttribute("aria-label","دقايق الكارديو الفعلية");
+    mi.oninput=function(){st.mins=mi.value;recalcCardio(dt);save();};
+    mi.onblur=function(){render();};
+    s.appendChild(mi);}
    sets.appendChild(s);})(i);
   box.appendChild(sets);
+  if(x.cardio)box.appendChild(el("div","kv",
+   "اكتب الدقايق اللي لعبتها فعلاً — الخطة "+esc(x.reps)+"، والعداد بيحسب اللي كتبته مش اللي مكتوب في الخطة."));
+
+  /* أهم نصيحة تبان من غير ما تفتح الشرح */
+  if(x.cues&&x.cues.length)box.appendChild(el("div","tip","💡 "+x.cues[0]));
 
   if(open[id]){
    var pn=el("div","panel"),sh=el("div","shots");
@@ -820,6 +843,12 @@ function scTrain(){
   "<b>التدرج:</b> لما تعمل أعلى رقم في المدى وأنت حاسس إنك تقدر على اتنين زيادة — زوّد الوزن. الرقم اللي في المربع هو التكرار المطلوب، والخانة اللي جنبه للوزن."));
  w.appendChild(c);
 
+ if(p.key)w.appendChild(el("div","card",
+  "<div class='ttl'>⚡ ترتيب اليوم</div>"+
+  "<div class='mini'><b>١.</b> إحماء كتف ومفاصل — ٥ د &nbsp;·&nbsp; <b>٢.</b> الحديد (٥ حركات) — ٢٥-٣٠ د &nbsp;·&nbsp; <b>٣.</b> الفترات — ٤٠ د</div>"+
+  "<div class='note bad'><b>الفترات آخر حاجة عشان تعملها وإنت فاضي، مش عشان تتساب.</b> "+
+  "الأسبوع اللي فات عملت الحديد وسبت الفترات — والفترات هي الجزء اللي بيخدم الهدف الأساسي من اليوم ده. "+
+  "<b>لو الوقت ضاق: اقص من الحديد مش من الكارديو</b>، أو اعمل ٤ جولات بدل ٨.</div>"));
  if(!p.light)w.appendChild(el("div","card",
   "<div class='ttl'>🪑 وإنت قاعد بتشتغل</div>"+
   "<div class='mini'>إنت شغال from home وقاعد أغلب اليوم. <b>كل ساعة قوم دقيقة</b> واعمل التلاتة دول — مش بديل عن التمرين، بس بيمنعوا الحوض والرجل إنهم يقفلوا:</div>"+
@@ -941,7 +970,8 @@ function scProg(){
  c0.appendChild(el("div","ttl","📏 محيط الوسط"));
  c0.appendChild(chartOf(S.ws,null,"#5CC8FF","سم"));
  var lw2=lastWaist(),lh2=lastHip();
- if(lw2&&lh2)c0.appendChild(el("div","mini","نسبة الخصر للورك: <b>"+(lw2/lh2).toFixed(2)+"</b> · الطبيعي ٠.٨٠–٠.٩٠"));
+ if(lw2&&lh2){if(lh2<70||lh2<lw2-15)c0.appendChild(el("div","mini","رقم الورك ("+lh2+") مش منطقي — النسبة مش هتتحسب لحد ما يتصحح."));
+  else c0.appendChild(el("div","mini","نسبة الخصر للورك: <b>"+(lw2/lh2).toFixed(2)+"</b> · الطبيعي ٠.٨٠–٠.٩٠"));}
  c0.appendChild(el("div","note ok","<b>الرسمين دول مش بيقولوا نفس الحاجة.</b> الوزن بيتحرك بالمية والملح والنوم. الوسط بيقيس الكرش نفسه. لو الوزن واقف والوسط نازل — <b>ده أحسن أسبوع في الخطة</b>، يعني دهون نزلت وعضل اتبنى."));
  w.appendChild(c0);
  var g=el("div","grid2"),ph=phase();

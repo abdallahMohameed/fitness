@@ -138,6 +138,22 @@ h1{font-size:23px;font-weight:900;letter-spacing:-.5px}
 .kgcount{display:flex;gap:9px;justify-content:center;margin-top:12px}
 .kgcount b{background:var(--surf2);border-radius:9px;padding:7px 13px;font-size:13px;color:var(--ink)}
 .kgcount b i{color:var(--acid);font-style:normal;font-weight:900}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.pill{background:var(--bg);border:1.5px solid var(--line);border-radius:99px;color:var(--dim);
+ padding:8px 13px;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer}
+.pill.on{background:var(--acid);border-color:var(--acid);color:#0E1113}
+/* التنبيه اليومي */
+.pop{position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.74);display:flex;
+ align-items:center;justify-content:center;padding:18px}
+.popin{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:20px;
+ width:100%;max-width:440px;max-height:82vh;overflow-y:auto}
+.popd{color:var(--acid);font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:5px}
+.popt{font-size:20px;font-weight:900;line-height:1.35;margin-bottom:13px}
+.popr{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.popr span{font-size:17px;flex-shrink:0;line-height:1.35}
+.popr p{margin:0;font-size:13.5px;line-height:1.6}
+.popr p b{color:var(--acid)}
+.popr p small{display:block;color:var(--dim);font-size:11.5px;margin-top:2px}
 .tip{background:rgba(198,255,58,.07);border-right:3px solid var(--acid);border-radius:0 8px 8px 0;
  padding:8px 11px;margin-top:9px;font-size:12.5px;line-height:1.6;color:var(--ink)}
 .tip b{color:var(--acid)}
@@ -451,6 +467,7 @@ var BADGES=[
 var scr="home",weekOff=0,dayOff=0,open={};
 function day(dt){var k=ymd(dt);if(!S.d[k])S.d[k]={ex:{},hab:{},meal:{},water:0,cardio:0};
  if(!S.d[k].sub)S.d[k].sub={};
+ if(!S.d[k].sup)S.d[k].sup={};
  var o=S.d[k];if(!o.ex)o.ex={};if(!o.hab)o.hab={};if(!o.meal)o.meal={};
  if(o.water==null)o.water=0;if(o.cardio==null)o.cardio=0;return o;}
 function curDate(){return addD(today(),weekOff*7+dayOff);}
@@ -458,6 +475,15 @@ function goDay(dt){weekOff=0;dayOff=Math.round((noon(dt)-today())/864e5);scr="tr
  window.scrollTo(0,0);render();}
 /* القايمة الجديدة بمفاتيح نصية — إعادة الترتيب مابتكسرش الداتا أبداً.
    القايمة القديمة (o.hab بالأرقام) متسابة زي ما هي للتاريخ. */
+/* المكملات: كل واحد بمفتاح ثابت — بيتسجل أنهي واحد اتاخد بالظبط كل يوم */
+var SUPS=[
+ {k:"vits",t:"Daily Vits",d:"كبسولة مع الفطار ١٢ظ"},
+ {k:"enera",t:"Enera Collagen",d:"كيس في ٢٠٠-٢٥٠ مل مية"},
+ {k:"bar",t:"بروتين بار",d:"٦م قبل الجيم"},
+ {k:"whey",t:"Whey",d:"سكوب ونص ٨:٤٥ في الجيم"},
+ {k:"creatine",t:"Creatine",d:"٣-٥ ج مع الشيك — كل يوم"},
+ {k:"honey",t:"عسل سدر",d:"معلقة صغيرة مع الفطار"}
+];
 var CHECK=[
  {k:"sup",t:"💊 المكملات",d:"Daily Vits مع الفطار · Enera · الكرياتين مع الشيك"},
  {k:"sugar",t:"🚫 صفر سكر وغازي",d:"الشاي والقهوة سادة · مفيش مشروبات غازية"},
@@ -575,7 +601,87 @@ function kegelToggle(kg,btn){
     st.textContent=set;rp.textContent="0";}}}
  step();kgT=setInterval(step,2000);}
 
+/* ===== التنبيه اليومي: بيطلع أول ما تفتح التطبيق كل يوم، ومرة واحدة بس =====
+   الفكرة: أهم ٣-٤ حاجات النهارده تبقى قدامك قبل ما تغرق وسط الشاشة. */
+function todayBrief(){
+ var dt=today(),o=day(dt),p=PLAN[dt.getDay()],out=[];
+
+ if(p&&p.key)out.push(["🔥","<b>كارديو الفترات ٤٠ دقيقة — ده الحدث الرئيسي النهارده.</b>",
+  "لو الوقت ضاق اقص من الحديد مش من الكارديو، أو اعمل ٤ جولات بدل ٨"]);
+ if(p&&p.measure)out.push(["📏","<b>النهارده يوم القياس.</b>",
+  "الوزن والوسط الصبح بعد الحمام قبل الأكل — نفس الظروف كل مرة"]);
+
+ var sn=0;SUPS.forEach(function(x){if(o.sup[x.k])sn++;});
+ if(sn<SUPS.length)out.push(["💊","<b>المكملات لسه ماتسجلتش</b> ("+sn+" من "+SUPS.length+")",
+  "سجّل اللي خدته فعلاً — من غيره مفيش استنتاج صحيح"]);
+
+ var cw=weekCardio(0);
+ if(cw<CARDIO_WK)out.push(["🚴","كارديو الأسبوع <b>"+cw+" من "+CARDIO_WK+"</b> دقيقة",
+  "فاضل "+(CARDIO_WK-cw)+" دقيقة على آخر السبت"]);
+
+ if(!o.hab.pelvic)out.push(["🔻","<b>تمرين قاع الحوض</b> — ٣ جولات × ١٠",
+  "المدرّب الموجّه في كارت «قاع الحوض» — دوس ابدأ واتبع الإيقاع"]);
+
+ var lw=lastWeight(),dl=daysLeft();
+ if(lw&&dl>0){var need=(lw-GOAL_END)/dl*7;
+  if(need>0)out.push(["🎯","فاضل <b>"+dl+" يوم</b> · المطلوب <b>"+need.toFixed(2)+" كجم/أسبوع</b>",
+   "الوزن الحالي "+lw+" · الهدف "+GOAL_END]);}
+
+ var ms=missed();
+ if(ms.length)out.push(["⏪","<b>"+ms.length+" يوم لسه ماتسجلوش</b>",
+  "التسجيل مفتوح لأي يوم — الأزرار في أول الصفحة"]);
+
+ return out.slice(0,4);}
+
+function showPop(){
+ var dt=today(),o=day(dt);
+ if(o.seen)return;
+ var items=todayBrief();
+ if(!items.length){o.seen=true;save();return;}
+ var p=PLAN[dt.getDay()],ov=el("div","pop"),bx=el("div","popin");
+ bx.appendChild(el("div","popd",esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()])));
+ bx.appendChild(el("div","popt",p&&p.t?esc(p.t):"يوم قياس وراحة"));
+ items.forEach(function(x){
+  var r=el("div","popr");
+  r.appendChild(el("span",null,x[0]));
+  r.appendChild(el("p",null,x[1]+"<small>"+x[2]+"</small>"));
+  bx.appendChild(r);});
+ var b=el("button","btn p","تمام، يلا نبدأ");
+ b.style.width="100%";b.style.marginTop="15px";b.style.padding="13px";
+ b.onclick=function(){o.seen=true;save();ov.remove();};
+ bx.appendChild(b);
+ ov.onclick=function(e){if(e.target===ov){o.seen=true;save();ov.remove();}};
+ ov.appendChild(bx);document.body.appendChild(ov);}
+
 /* ===== كروت التسجيل — بتشتغل على أي يوم ===== */
+function cardSups(dt,lbl){
+ var o=day(dt),c=el("div","card");
+ var n=0;SUPS.forEach(function(x){if(o.sup[x.k])n++;});
+ c.appendChild(el("div","ttl","<span>💊 اللي خدته "+esc(lbl)+"</span><span class='kv'>"+n+" من "+SUPS.length+"</span>"));
+ c.appendChild(el("div","kv","دوس على اللي خدته فعلاً — مش اللي المفروض تاخده. من غير الرقم ده مقدرش أفسّر أي نتيجة."));
+ var g=el("div","pills");
+ SUPS.forEach(function(x){
+  var b=el("button","pill"+(o.sup[x.k]?" on":""),(o.sup[x.k]?"✓ ":"")+esc(x.t));
+  b.title=x.d;
+  b.onclick=function(){
+   o.sup[x.k]=!o.sup[x.k];
+   var all=true;SUPS.forEach(function(y){if(!o.sup[y.k])all=false;});
+   o.hab.sup=all;
+   checkBadges();save();render();};
+  g.appendChild(b);});
+ c.appendChild(g);
+ var mw=el("div","subwrap"),mi=document.createElement("input");
+ mi.type="text";mi.className="subin";mi.value=o.med||"";
+ mi.placeholder="خدت حاجة تانية؟ دوا، مسكّن، أي حاجة — اكتبها";
+ mi.setAttribute("aria-label","أدوية أو حاجات تانية");
+ mi.onchange=function(){var v=mi.value.trim();if(v)o.med=v;else delete o.med;save();};
+ mw.appendChild(mi);
+ if(o.med){var mx=el("button","subx","✕");
+  mx.onclick=function(){delete o.med;save();render();};mw.appendChild(mx);}
+ c.appendChild(mw);
+ c.appendChild(el("div","kv","أي دوا أو مكمل بره القايمة اكتبه هنا — بيتسجل مع اليوم وبيطلع في الـexport."));
+ return c;}
+
 function cardHabits(dt,lbl){
  var o=day(dt),c=el("div","card"),n=habDone(o),N=CHECK.length;
  var t=el("div","ttl");
@@ -790,6 +896,7 @@ function scHome(){
  w.appendChild(pv);
 
  w.appendChild(cardMeals(dt,"النهارده"));
+ w.appendChild(cardSups(dt,"النهارده"));
  w.appendChild(cardHabits(dt,"النهارده"));
  return w;}
 
@@ -841,6 +948,7 @@ function scTrain(){
   var lbl0=(ymd(dt)===ymd(today()))?"النهارده":(esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()]));
   w.appendChild(cardHabits(dt,lbl0));
   w.appendChild(cardMeals(dt,lbl0));
+  w.appendChild(cardSups(dt,lbl0));
   w.appendChild(cardWater(dt,lbl0));
   return w;}
 
@@ -944,6 +1052,7 @@ function scTrain(){
   "<b>إنت بتسجّل يوم "+lbl+".</b> التسجيل مفتوح لأي يوم — لو فاتك يوم، ارجعله وسجّله عادي."));
  w.appendChild(cardHabits(dt,lbl));
  w.appendChild(cardMeals(dt,lbl));
+ w.appendChild(cardSups(dt,lbl));
  w.appendChild(cardWater(dt,lbl));
 
  if(p.upper){var shc=el("div","card");
@@ -1401,6 +1510,7 @@ function render(){
   nav.appendChild(b);});
  document.getElementById("sv").innerHTML=statusTxt();}
 checkBadges();render();
+try{showPop();}catch(e){}   /* التنبيه اليومي — مرة واحدة كل يوم */
 })();
 </script>
 </body>

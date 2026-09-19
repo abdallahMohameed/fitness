@@ -122,6 +122,22 @@ h1{font-size:23px;font-weight:900;letter-spacing:-.5px}
 .navbtn{flex:1;background:none;border:none;padding:9px 0 8px;color:var(--dim);font-size:10px;font-weight:700;cursor:pointer}
 .navbtn i{font-style:normal;font-size:19px;display:block;margin-bottom:2px}
 .navbtn.on{color:var(--acid)}
+/* مدرّب قاع الحوض */
+.kg{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.kgsvg{display:block;width:100%;max-width:300px;margin:0 auto}
+.kgfloor{transition:transform 1.9s cubic-bezier(.4,0,.3,1)}
+.kg.squeeze .kgfloor{transform:translateY(-13px)}
+.kgarrow{opacity:0;transition:opacity .5s,transform 1.9s cubic-bezier(.4,0,.3,1)}
+.kg.squeeze .kgarrow{opacity:1;transform:translateY(-13px)}
+.kgring{stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1.9s linear}
+.kg.squeeze .kgring{stroke-dashoffset:0}
+.kgcue{text-align:center;font-size:26px;font-weight:900;line-height:1.3;margin-top:10px;
+ color:var(--dim);transition:color .3s}
+.kg.squeeze .kgcue{color:var(--acid)}
+.kgsub{text-align:center;color:var(--dim);font-size:12.5px;margin-top:2px}
+.kgcount{display:flex;gap:9px;justify-content:center;margin-top:12px}
+.kgcount b{background:var(--surf2);border-radius:9px;padding:7px 13px;font-size:13px;color:var(--ink)}
+.kgcount b i{color:var(--acid);font-style:normal;font-weight:900}
 .tip{background:rgba(198,255,58,.07);border-right:3px solid var(--acid);border-radius:0 8px 8px 0;
  padding:8px 11px;margin-top:9px;font-size:12.5px;line-height:1.6;color:var(--ink)}
 .tip b{color:var(--acid)}
@@ -357,6 +373,7 @@ var PELVIC={k:"Pelvic_Tilt_Into_Bridge",ar:"تمرين قاع الحوض (كيج
  how:["<b>٣ جولات × ١٠ انقباضات في اليوم.</b>","اقبض ثانيتين ← ارخي ثانيتين. الإرخاء مهم زي القبض بالظبط.","تنفّس عادي طول الوقت.","اعمله <b>قاعد أو راقد</b> في الأول لحد ما تتقنه، وبعد أسبوعين جرّبه وأنت واقف.","ينفع في أي وقت ومكان — في العربية، على المكتب، قبل ما تنام. مفيش حد هيلاحظ."],
  imgnote:"الصور دي لـ<b>جسر الحوض</b> — تمرين مساعد بيشتغل على نفس المنطقة وينفع تعمله بعد الكيجل. الكيجل نفسه حركة داخلية مفيش صورة بتوريها، عشان كده الشرح فوق مكتوب بالتفصيل."};
 
+/* HABITS القديمة (مفاتيح رقمية) — متسابة للتاريخ بس، القايمة الشغالة اسمها CHECK */
 var HABITS=[
  ["صفر سكر في المشروبات","الشاي والقهوة سادة. أكبر رافعة في النظام كله"],
  ["مفيش مشروب غازي","لو محتاج الإحساس: مية غازية أو دايت"],
@@ -439,7 +456,17 @@ function day(dt){var k=ymd(dt);if(!S.d[k])S.d[k]={ex:{},hab:{},meal:{},water:0,c
 function curDate(){return addD(today(),weekOff*7+dayOff);}
 function goDay(dt){weekOff=0;dayOff=Math.round((noon(dt)-today())/864e5);scr="train";open={};
  window.scrollTo(0,0);render();}
-function habDone(o){var n=0;for(var i=0;i<HABITS.length;i++)if(o.hab[i])n++;return n;}
+/* القايمة الجديدة بمفاتيح نصية — إعادة الترتيب مابتكسرش الداتا أبداً.
+   القايمة القديمة (o.hab بالأرقام) متسابة زي ما هي للتاريخ. */
+var CHECK=[
+ {k:"sup",t:"💊 المكملات",d:"Daily Vits مع الفطار · Enera · الكرياتين مع الشيك"},
+ {k:"sugar",t:"🚫 صفر سكر وغازي",d:"الشاي والقهوة سادة · مفيش مشروبات غازية"},
+ {k:"meals",t:"🍽️ الوجبات جوه النافذة",d:"٤ وجبات · آخرها قبل ٩ · بروتين في كل واحدة"},
+ {k:"food",t:"🥗 خضار مرتين ومشوي مش مقلي",d:"مرة مع الفطار ومرة مع الغدا"},
+ {k:"pelvic",t:"🔻 تمرين قاع الحوض",d:"٣ جولات × ١٠ — المدرب الموجّه تحت"},
+ {k:"sleep",t:"😴 نوم ٧ ساعات",d:"الموبايل بره الأوضة · آخر قهوة قبل ٢"}
+];
+function habDone(o){var n=0;CHECK.forEach(function(h){if(o.hab[h.k])n++;});return n;}
 function mealDone(o){var n=0;for(var i=0;i<MEAL_IDS.length;i++)if(o.meal[MEAL_IDS[i]])n++;return n;}
 /* أيام فاتت من غير تسجيل — عشان ماتضيعش */
 function missed(){var out=[];
@@ -512,8 +539,8 @@ function checkBadges(){
  if(wk.length>1&&S.ws[wk[0]]-S.ws[wk[wk.length-1]]>=3)b.waist=1;
  for(var o2=-8;o2<=0;o2++)if(weekCardio(o2)>=CARDIO_WK)b.cardio=1;
  for(var k in S.d){var o=S.d[k];
-  var h=0;for(var i=0;i<HABITS.length;i++)if(o.hab[i])h++;
-  if(h===HABITS.length)b.hab=1;
+  var h=0;CHECK.forEach(function(x){if(o.hab[x.k])h++;});
+  if(h===CHECK.length)b.hab=1;
   for(var e in o.ex)if((e.indexOf("Leg_")===0||e==="Barbell_Hip_Thrust"||e==="Romanian_Deadlift")
    &&o.ex[e].done&&o.ex[e].done.filter(Boolean).length)b.leg=1;}
  if(Object.keys(prs()).length)b.pr=1;}
@@ -523,22 +550,47 @@ function el(t,c,h){var n=document.createElement(t);if(c)n.className=c;if(h!=null
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){
  return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
+/* ===== مدرّب قاع الحوض: ٢ ثانية قبض / ٢ ثانية إرخاء × ١٠ × ٣ ===== */
+var kgT=null;
+function kegelToggle(kg,btn){
+ if(kgT){clearInterval(kgT);kgT=null;kg.classList.remove("squeeze");
+  btn.textContent="ابدأ الجولة";btn.className="btn p";
+  document.getElementById("kgcue").textContent="وقفت";
+  document.getElementById("kgsub").textContent="ابدأ تاني في أي وقت";return;}
+ var rep=0,set=1,on=false;
+ var cue=document.getElementById("kgcue"),sub=document.getElementById("kgsub"),
+     rp=document.getElementById("kgrep"),st=document.getElementById("kgset");
+ btn.textContent="وقف";btn.className="btn";
+ function step(){
+  on=!on;
+  if(on){kg.classList.add("squeeze");cue.textContent="اقبض";
+   sub.textContent="شد لجوّا ولفوق · بطنك ومؤخرتك ورجلك ثابتين · تنفّس عادي";}
+  else{kg.classList.remove("squeeze");cue.textContent="ارخي";
+   sub.textContent="سيبها ترجع بالكامل — الإرخاء مهم زي القبض بالظبط";
+   rep++;rp.textContent=rep;
+   if(rep>=10){rep=0;set++;
+    if(set>3){clearInterval(kgT);kgT=null;btn.textContent="ابدأ تاني";btn.className="btn p";
+     cue.textContent="خلصت ✓";sub.textContent="٣ جولات × ١٠ — علّم العادة في القايمة فوق";
+     st.textContent="3";rp.textContent="10";return;}
+    st.textContent=set;rp.textContent="0";}}}
+ step();kgT=setInterval(step,2000);}
+
 /* ===== كروت التسجيل — بتشتغل على أي يوم ===== */
 function cardHabits(dt,lbl){
- var o=day(dt),c=el("div","card"),n=habDone(o);
+ var o=day(dt),c=el("div","card"),n=habDone(o),N=CHECK.length;
  var t=el("div","ttl");
  t.appendChild(el("span",null,"✅ عادات "+lbl));
- var all=el("button","btn"+(n===HABITS.length?" p":""),n===HABITS.length?"شيل الكل":"كله ✓");
- all.onclick=function(){var on=n<HABITS.length;
-  for(var i=0;i<HABITS.length;i++)o.hab[i]=on?true:false;
+ var all=el("button","btn"+(n===N?" p":""),n===N?"شيل الكل":"كله ✓");
+ all.onclick=function(){var on=n<N;
+  CHECK.forEach(function(h){o.hab[h.k]=on?true:false;});
   checkBadges();save();render();};
  t.appendChild(all);c.appendChild(t);
- c.appendChild(el("div","kv",n+" من "+HABITS.length));
- c.appendChild(el("div","bar","<i style='width:"+(n/HABITS.length*100)+"%'></i>"));
- HABITS.forEach(function(h,i){
-  var r=el("div","row"),b=el("button","chk"+(o.hab[i]?" on":""),o.hab[i]?"✓":"");
-  b.onclick=function(){o.hab[i]=!o.hab[i];checkBadges();save();render();};
-  r.appendChild(b);r.appendChild(el("p",null,esc(h[0])+"<small>"+esc(h[1])+"</small>"));
+ c.appendChild(el("div","kv",n+" من "+N));
+ c.appendChild(el("div","bar","<i style='width:"+(n/N*100)+"%'></i>"));
+ CHECK.forEach(function(h){
+  var r=el("div","row"),b=el("button","chk"+(o.hab[h.k]?" on":""),o.hab[h.k]?"✓":"");
+  b.onclick=function(){o.hab[h.k]=!o.hab[h.k];checkBadges();save();render();};
+  r.appendChild(b);r.appendChild(el("p",null,esc(h.t)+"<small>"+esc(h.d)+"</small>"));
   c.appendChild(r);});
  return c;}
 
@@ -691,7 +743,35 @@ function scHome(){
  pv.onclick=function(e){if(e.target.tagName==="BUTTON")return;open.pv=!open.pv;render();};
  pv.appendChild(el("div","mini",PELVIC.why));
  if(open.pv){
-  var pp=el("div","panel"),psh=el("div","shots");
+  var pp=el("div","panel");
+
+  /* ==== المدرّب الموجّه ==== */
+  var kg=el("div","kg");
+  kg.innerHTML=
+   '<svg class="kgsvg" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" aria-label="رسم متحرك لقاع الحوض">'+
+   '<path d="M52 34 C52 108 74 140 116 156" fill="none" stroke="var(--line)" stroke-width="9" stroke-linecap="round"/>'+
+   '<path d="M248 34 C248 108 226 140 184 156" fill="none" stroke="var(--line)" stroke-width="9" stroke-linecap="round"/>'+
+   '<ellipse cx="150" cy="74" rx="46" ry="34" fill="none" stroke="var(--dim)" stroke-width="3"/>'+
+   '<text x="150" y="79" text-anchor="middle" fill="var(--dim)" font-size="12" font-family="inherit">المثانة</text>'+
+   '<g class="kgfloor">'+
+   '<path d="M92 132 C118 158 182 158 208 132" fill="none" stroke="var(--acid)" stroke-width="7" stroke-linecap="round"/>'+
+   '<circle cx="150" cy="150" r="5" fill="var(--acid)"/></g>'+
+   '<g class="kgarrow"><path d="M150 122 L150 106 M143 113 L150 105 L157 113" stroke="var(--acid)" '+
+   'stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'+
+   '<circle cx="150" cy="140" r="42" fill="none" stroke="var(--surf2)" stroke-width="3"/>'+
+   '<circle class="kgring" cx="150" cy="140" r="42" fill="none" stroke="var(--acid)" stroke-width="3" '+
+   'stroke-linecap="round" transform="rotate(-90 150 140)" opacity=".45"/>'+
+   '</svg>'+
+   '<div class="kgcue" id="kgcue">جاهز</div>'+
+   '<div class="kgsub" id="kgsub">العضلة بتتشد لجوّا ولفوق — زي ما الخط الأخضر بيطلع</div>'+
+   '<div class="kgcount"><b>التكرار <i id="kgrep">0</i>/10</b><b>الجولة <i id="kgset">1</i>/3</b></div>';
+  var kb=el("div","qrow"),bst=el("button","btn p","ابدأ الجولة");
+  bst.onclick=function(){kegelToggle(kg,bst);};
+  kb.appendChild(bst);kg.appendChild(kb);
+  pp.appendChild(kg);
+  pp.appendChild(el("div","note","<b>الرسم ده مش صورة تشريحية دقيقة</b> — ده إيقاع بصري. اللي يهمك: الخط الأخضر (قاع الحوض) بيطلع لفوق وقت القبض وبينزل وقت الإرخاء، وده نفس الإحساس اللي المفروض تحسه."));
+
+  var psh=el("div","shots");
   ["البداية","النهاية"].forEach(function(cap,i){
    var f=document.createElement("figure");f.className="shot";
    var im=document.createElement("img");im.loading="lazy";im.alt="جسر الحوض — "+cap;
@@ -1003,7 +1083,7 @@ function scProg(){
  var ck=[["١٨ تمرينة",ph.sess>=PHASE_SESS,ph.sess+"/"+PHASE_SESS],
   ["أسبوع كارديو كامل",(function(){for(var i=0;i>=-4;i--)if(weekCardio(i)>=CARDIO_WK)return true;return false;})(),"١٦٠ د"],
   ["٤ قياسات وسط",Object.keys(S.ws).length>=4,Object.keys(S.ws).length+"/٤"],
-  ["يوم كل العادات فيه ✓",!!S.b.hab,"٧/٧"]];
+  ["يوم كل العادات فيه ✓",!!S.b.hab,CHECK.length+"/"+CHECK.length]];
  ck.forEach(function(x){var r=el("div","row");
   r.appendChild(el("div","chk"+(x[1]?" on":""),x[1]?"✓":""));
   r.appendChild(el("p",null,esc(x[0])+"<small>"+esc(x[2])+"</small>"));

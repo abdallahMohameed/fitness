@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.1 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v4.2 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -218,7 +218,7 @@ function writeBak(){if(MODE!=="local")return;
 var S=readAll();
 if(!S||!S.d){var bk=readBak();if(bk)S=bk.s;}   /* الأساسي باظ؟ رجّع من النسخة الاحتياطية */
 if(!S)S={v:3,w:{},ws:{},d:{},b:{}};
-["w","ws","hp","d","b"].forEach(function(k){if(!S[k])S[k]={};});
+["w","ws","hp","ch","d","b"].forEach(function(k){if(!S[k])S[k]={};});
 
 /* ===== ترقية v2 ← v3: بتعدّل في مكانها، مفيش استبدال ولا مسح ===== */
 function migrate(){
@@ -306,23 +306,15 @@ var PLAN={
   {g:"كارديو",k:"Elliptical_Trainer",ar:"دراجة أو إليبتيكال",en:"Bike / Elliptical",sets:1,reps:"٢٠ دقيقة",cardio:20,
    cues:["<b>بعد الحديد</b>","نفَس متواصل، مش سباق","مفيش جري"],alt:"مشي مائل على المشاية",nw:true}]},
 
- 2:{t:"كارديو وحركة — بونس",bonus:true,light:true,sauna:true,fact:"إنت شغال from home وقاعد أغلب اليوم. القعدة الطويلة بتقلل الدورة الدموية في الحوض والرجل — واليوم ده بيفك ده.",ex:[
+ 2:{t:"كارديو وحركة — بونس",bonus:true,light:true,sauna:true,fact:"يوم في البيت: ٤ حاجات بس. القعدة الطويلة بتقفل الحوض والرجل — اليوم ده بيفكّها. والرفرفة الجانبية بإزازتين المية اللي عندك أصلاً.",ex:[
   {g:"كارديو — في أي مكان",k:"Elliptical_Trainer",ar:"مشي أو دراجة ٤٠ دقيقة",en:"Brisk Walk / Bike",sets:1,reps:"٤٠ دقيقة",cardio:40,
-   cues:["سرعة تخليك تتنفس أعمق من العادي","أي مشوار أقل من ٢٠ دقيقة — امشيه","ده بيتجمع أكتر مما تتخيل"],alt:"دراجة في الجيم أو مشي مائل",nw:true},
-  {g:"فك القعدة — من غير جيم ومن غير أوزان",k:"Standing_Hip_Circles",ar:"دوائر الورك",en:"Hip Circles",sets:2,reps:"١٠ لكل اتجاه",
-   cues:["واقف وإيدك على وسطك، لف حوضك دوائر واسعة","بيفك قابضات الفخذ اللي بتتقفل من القعدة الطويلة","ده أهم تمرين في اليوم ده لو بتقعد ٨ ساعات"],alt:"دوائر وإنت قاعد على طرف الكرسي",nw:true},
-  {k:"Standing_Pelvic_Tilt",ar:"إمالة الحوض واقف",en:"Standing Pelvic Tilt",sets:2,reps:"١٥",
-   cues:["لف حوضك لقدام ولورا ببطء من غير ما تحرك كتفك","بيصحّي عضلات أسفل البطن وقاع الحوض","<b>ينفع تعمله وإنت واقف في أي مكان</b>"],alt:"نفس الحركة راقد",nw:true},
-  {k:"Cat_Stretch",ar:"تمدد القطة",en:"Cat-Cow",sets:2,reps:"١٠",
-   cues:["على أربعة: قوّس ضهرك لفوق وبعدين نزّله ببطء","بيفك الفقرات الصدرية اللي بتتيبس من الانحناء على اللابتوب","تنفّس مع الحركة"],alt:"نفس الحركة قاعد على كرسي",nw:true},
-  {k:"Shoulder_Circles",ar:"دوائر الكتف",en:"Shoulder Circles",sets:2,reps:"١٠ لكل اتجاه",
-   cues:["دوائر كبيرة وبطيئة من غير وزن","<b>ده نفسه إحماء الكتف</b> — كل ما تعمله أكتر، الطقطقة بتقل أسرع","ينفع على المكتب في أي وقت"],alt:"دوائر بدراع واحد",nw:true},
-  {k:"Seated_Calf_Raise",ar:"السمانة وإنت قاعد",en:"Seated Calf Raise",sets:3,reps:"٢٠",
-   cues:["وإنت قاعد على المكتب: ارفع كعبك وانزل","<b>ده مش تمرين شكل — ده مضخة</b>: السمانة بتساعد الدم يرجع من رجلك لقلبك","اعمله كل ما تفتكر وإنت قاعد"],alt:"السمانة واقف",nw:true},
+   cues:["سرعة تخليك تتنفس أعمق من العادي","أي مشوار أقل من ٢٠ دقيقة — امشيه","اكتب الدقايق الفعلية"],alt:"دراجة في الجيم أو مشي مائل",nw:true},
+  {g:"حركة — دايرة واحدة",k:"Mobility_Circuit",img:"Standing_Hip_Circles",ar:"دايرة الحركة",en:"Mobility Circuit",sets:2,reps:"جولتين",
+   cues:["<b>الخمسة ورا بعض = جولة.</b> جولتين وخلاص — ٨ دقايق","<b>١٠ دوائر ورك</b> لكل اتجاه — إيدك على وسطك","<b>١٥ إمالة حوض</b> واقف — لف الحوض لقدام ولورا","<b>١٠ تمدد قطة</b> على أربعة — قوّس ونزّل","<b>١٠ دوائر كتف</b> لكل اتجاه — ده نفسه إحماء الكتف","<b>٢٠ سمانة</b> وإنت قاعد أو واقف"],alt:"أي ٣ منهم لو الوقت ضيق",nw:true},
+  {g:"بونس — عرض الكتف",k:"Side_Lateral_Raise",ar:"رفرفة جانبية بإزازتين مية",en:"Lateral Raise (Bottles)",sets:3,reps:"١٥-٢٠",bx:true,
+   cues:["<b>إزازتين المية الكبار (١.٥ لتر) = ١.٥ كجم في كل إيد</b> — كفاية للتمرين ده في البيت","ارفع <b>لحد مستوى الكتف بس</b> — ولا سنتي أعلى","كوعك أعلى من رسغك — كأنك بتصب مية","<b>بونس:</b> لو اتعمل، الكتف الجانبي بقى مرتين في الأسبوع. لو اتساب — مفيش مشكلة","عرض الكتف هو اللي بيعمل الـV من فوق وبيخلي الوسط يبان أصغر"],alt:"دامبل خفيف لو في الجيم"},
   {g:"كور",k:"Dead_Bug",ar:"الحشرة الميتة",en:"Dead Bug",sets:3,reps:"١٠ لكل جنب",
-   cues:["ضهرك ملزوق في الأرض طول الوقت","نزّل الرجل والذراع المتعاكسين ببطء","<b>لو ضهرك اتقوّس — قلّل المدى</b>"],alt:"بلانك",nw:true},
-  {k:"Side_Bridge",ar:"بلانك جانبي",en:"Side Plank",sets:2,reps:"٣٠ ثانية لكل جنب",
-   cues:["جسمك خط مستقيم من الكتف للكاحل","ارفع حوضك عالي ومتسيبهوش ينزل","بيشد الجناب"],alt:"على الركبة",nw:true}]},
+   cues:["ضهرك ملزوق في الأرض طول الوقت","نزّل الرجل والذراع المتعاكسين ببطء","<b>لو ضهرك اتقوّس — قلّل المدى</b>"],alt:"بلانك",nw:true}]},
 
  3:{t:"صدر وترايسبس + بطن",req:true,upper:true,fact:"أكبر عضلات جزئك العلوي النهارده — من أعلى أيام الأسبوع في الحرق.",ex:[
   {g:"١ — الصدر العلوي الأول",k:"Incline_Dumbbell_Press",ar:"ضغط دامبل مايل",en:"Incline DB Press",sets:3,reps:"١٠-١٢",
@@ -521,6 +513,12 @@ function lastWeight(){var k=Object.keys(S.w).sort();return k.length?S.w[k[k.leng
 function firstWeight(){var k=Object.keys(S.w).sort();return k.length?S.w[k[0]]:null;}
 function lastWaist(){var k=Object.keys(S.ws).sort();return k.length?S.ws[k[k.length-1]]:null;}
 function lastHip(){var k=Object.keys(S.hp).sort();return k.length?S.hp[k[k.length-1]]:null;}
+function lastChest(){var k=Object.keys(S.ch).sort();return k.length?S.ch[k[k.length-1]]:null;}
+/* نسبة الوسط للصدر — المحدد الأساسي لجاذبية جسم الراجل (Maisey 1999). الأجذب ~٠.٧٠ */
+var WCR_GOAL=0.70;
+function wcrSeries(){var o={};Object.keys(S.ch).forEach(function(d){
+ var ks=Object.keys(S.ws).filter(function(k){return k<=d;}).sort();
+ if(ks.length)o[d]=+(S.ws[ks[ks.length-1]]/S.ch[d]).toFixed(3);});return o;}
 function firstWaist(){var k=Object.keys(S.ws).sort();return k.length?S.ws[k[0]]:null;}
 function sessions(){var n=0;
  for(var k in S.d){var o=S.d[k],c=0;
@@ -570,6 +568,23 @@ function recordOf(k,before){
   if(!best||top>best.v)best={v:top,d:d};
   if(d<before)last={v:top,d:d};});
  return {best:best,last:last};}
+
+/* قاعدة التدرج: خلّصت كل المجموعات بنفس الوزن الأعلى في مجموعتين على الأقل ← زوّد.
+   مد الرجل ٥ كجم بالكتير في الأسبوع. الباقي +٢.٥. */
+function progHint(x,before){
+ if(x.cardio||x.nw||x.k==="Pushups")return "";
+ var keys=Object.keys(S.d).filter(function(d){return d<before;}).sort().reverse(),st=null;
+ for(var i=0;i<keys.length;i++){var e=S.d[keys[i]].ex&&S.d[keys[i]].ex[x.k];
+  if(e&&(e.done||[]).some(Boolean)){st=e;break;}}
+ if(!st)return "";
+ var ws=[],all=true;
+ for(var j=0;j<x.sets;j++){var n=numOf((st.w||[])[j]);if(!(st.done||[])[j])all=false;if(n!=null)ws.push(n);}
+ if(!ws.length)return "⚠️ آخر مرة مفيش أوزان متسجلة — سجّل النهارده عشان نعرف نزوّد امتى";
+ var top=Math.max.apply(null,ws),cnt=ws.filter(function(v){return v===top;}).length;
+ if(!all)return "⏸ آخر مرة ماكملتش كل المجموعات — ثبّت على "+top+" النهارده";
+ if(cnt>=2){var inc=x.k==="Leg_Extensions"?5:2.5;
+  return "⬆️ <b>جرّب "+(top+inc)+" النهارده</b> (أو أقرب رقم أعلى على الجهاز) — خلّصت كل المجموعات و"+top+" اتكرر "+cnt+" مرات";}
+ return "➡️ ثبّت على "+top+" لحد ما يتكرر في مجموعتين — وبعدها زوّد";}
 
 /* الكارديو بيتجمع من الدقايق الفعلية. لو مفيش دقايق مكتوبة والتمرين متعلّم ✓، بياخد رقم الخطة. */
 function recalcCardio(dt){
@@ -867,6 +882,19 @@ function scHome(){
  var sb=el("button","btn p","حفظ");
  sb.onclick=function(){var v=parseFloat(si.value);if(v>0){S.ws[ymd(dt)]=v;checkBadges();save();render();}};
  q2.appendChild(si);q2.appendChild(sb);sw.appendChild(q2);
+ var lch=lastChest();
+ var q4=el("div","qrow"),ci=document.createElement("input");
+ ci.type="number";ci.step="0.5";ci.placeholder=lch?("الصدر "+lch+" سم"):"الصدر سم";
+ ci.setAttribute("aria-label","محيط الصدر");
+ var cb=el("button","btn","حفظ الصدر");
+ cb.onclick=function(){var v=parseFloat(ci.value);if(v>60){S.ch[ymd(dt)]=v;save();render();}};
+ q4.appendChild(ci);q4.appendChild(cb);sw.appendChild(q4);
+ if(lws&&lch){var wcr=lws/lch;
+  sw.appendChild(el("div","note"+(wcr<=0.80?" ok":""),
+   "<b>نسبة الوسط للصدر: "+wcr.toFixed(2)+"</b> · الأجذب ~"+WCR_GOAL.toFixed(2)+
+   ". دي أهم رقم لهدف «العضلات الجذابة» — بتنزل من ناحيتين: الوسط بالأكل والكارديو، والصدر والضهر بالحديد."));}
+ else if(lws&&!lch)sw.appendChild(el("div","note",
+  "<b>قيس محيط الصدر مرة:</b> تحت الإبط، على أعرض نقطة في الصدر، والشريط أفقي من ورا عند لوحي الكتف. إيديك مرخية جنبك وتنفّس عادي."));
  var lhp=lastHip();
  var q3=el("div","qrow"),hi=document.createElement("input");
  hi.type="number";hi.step="0.5";hi.placeholder=lhp?("الورك "+lhp+" سم"):"الورك سم";
@@ -1025,17 +1053,19 @@ function scTrain(){
   if(!o.ex[id])o.ex[id]={w:[],done:[]};
   var st=o.ex[id],box=el("div","ex"),head=el("div","exhead");
   head.appendChild(el("div","dot"+(st.done.filter(Boolean).length>=x.sets?" on":"")));
-  var nm=el("button","exname","<b>"+esc(x.ar)+"</b><span>"+esc(x.en)+" <span class='more'>"+
+  var nm=el("button","exname","<b>"+esc(x.ar)+"</b>"+(x.bx?" <span class='tag bon'>بونس</span>":"")+"<span>"+esc(x.en)+" <span class='more'>"+
    (open[id]?"▲ اقفل":"▼ الشرح والصور")+"</span></span>");
   nm.onclick=function(){open[id]=!open[id];render();};
   head.appendChild(nm);box.appendChild(head);
 
   var rc=recordOf(x.k,ymd(dt)),unit=x.cardio?" د":(x.k==="Pushups"?" تكرار":" كجم");
+  var hint=progHint(x,ymd(dt));
   if(rc.best){
    var fd=function(d){var q=d.split("-");return (+q[2])+"/"+(+q[1]);};
    box.appendChild(el("div","kv","🏆 أعلى: <b style='color:var(--acid)'>"+rc.best.v+unit+"</b> ("+fd(rc.best.d)+")"+
     (rc.last&&rc.last.d!==rc.best.d?" · آخر مرة: <b>"+rc.last.v+unit+"</b> ("+fd(rc.last.d)+")":
      (rc.last?" · ده كان آخر مرة":""))));}
+  if(hint)box.appendChild(el("div","kv",hint));
   box.appendChild(el("div","repbig",x.cardio
    ?("<b>"+esc(x.reps)+"</b>")
    :((x.sets>1?x.sets+" مجموعات":"مجموعة واحدة")+" × <b>"+esc(x.reps)+"</b>"+
@@ -1078,7 +1108,7 @@ function scTrain(){
    ["البداية","النهاية"].forEach(function(cap,i){
     var f=document.createElement("figure");f.className="shot";
     var im=document.createElement("img");im.loading="lazy";im.alt=x.ar+" — "+cap;
-    im.src=IMG+x.k+"/"+i+".jpg";im.onerror=function(){im.style.display="none";};
+    im.src=IMG+(x.img||x.k)+"/"+i+".jpg";im.onerror=function(){im.style.display="none";};
     f.appendChild(im);f.appendChild(el("figcaption",null,cap));sh.appendChild(f);});
    pn.appendChild(sh);
    if(x.cardio){
@@ -1223,6 +1253,9 @@ function scProg(){
  var c0=el("div","card");
  c0.appendChild(el("div","ttl","📏 محيط الوسط"));
  c0.appendChild(chartOf(S.ws,null,"#5CC8FF","سم"));
+ var wser=wcrSeries();
+ if(Object.keys(wser).length){c0.appendChild(el("div","ttl","📐 نسبة الوسط للصدر"));
+  c0.appendChild(chartOf(wser,WCR_GOAL,"#C6FF3A",""));}
  var lw2=lastWaist(),lh2=lastHip();
  if(lw2&&lh2){if(lh2<70||lh2<lw2-15)c0.appendChild(el("div","mini","رقم الورك ("+lh2+") مش منطقي — النسبة مش هتتحسب لحد ما يتصحح."));
   else c0.appendChild(el("div","mini","نسبة الخصر للورك: <b>"+(lw2/lh2).toFixed(2)+"</b> · الطبيعي ٠.٨٠–٠.٩٠"));}

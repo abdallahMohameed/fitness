@@ -205,6 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
+var APP_V="v4.1 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -638,6 +639,21 @@ function kegelToggle(kg,btn){
     st.textContent=set;rp.textContent="0";}}}
  step();kgT=setInterval(step,2000);}
 
+/* ===== استراحة الحركة: عدّاد بيتسجّل، مش كارت بيتقري ===== */
+var MV_GOAL=6;
+function cardMove(dt,lbl){
+ var o=day(dt),n=o.mv||0,c=el("div","card");
+ c.appendChild(el("div","ttl","<span>🪑 قمت اتحركت "+esc(lbl)+"</span><span class='kv'>"+n+" من "+MV_GOAL+"</span>"));
+ c.appendChild(el("div","bar","<i style='width:"+Math.min(100,n/MV_GOAL*100)+"%'></i>"));
+ c.appendChild(el("div","mini","<b>كل ما تقوم دقيقة من القعدة:</b> ٢٠ سمانة · ١٠ دوائر كتف · ١٠ إمالة حوض — ودوس <b>+١</b>."));
+ var q=el("div","qrow"),minus=el("button","btn","−"),plus=el("button","btn p","+١ قمت دلوقتي");
+ minus.style.flex="0 0 54px";plus.style.flex="1";
+ minus.onclick=function(){if((o.mv||0)>0){o.mv=(o.mv||0)-1;save();render();}};
+ plus.onclick=function(){o.mv=(o.mv||0)+1;save();render();};
+ q.appendChild(minus);q.appendChild(plus);c.appendChild(q);
+ c.appendChild(el("div","kv","إنت شغال from home. القعدة المتواصلة بتقفل الحوض والرجل وبترفع دهون البطن حتى لو بتتمرن — التقطيع هو العلاج."));
+ return c;}
+
 /* ===== التنبيه اليومي: بيطلع أول ما تفتح التطبيق كل يوم، ومرة واحدة بس =====
    الفكرة: أهم ٣-٤ حاجات النهارده تبقى قدامك قبل ما تغرق وسط الشاشة. */
 function todayBrief(){
@@ -652,6 +668,8 @@ function todayBrief(){
  if(sn<SUPS.length)out.push(["💊","<b>المكملات لسه ماتسجلتش</b> ("+sn+" من "+SUPS.length+")",
   "سجّل اللي خدته فعلاً — من غيره مفيش استنتاج صحيح"]);
 
+ if(!(o.mv>0))out.push(["🪑","<b>قوم دقيقة كل ساعة</b> — ودوس +١ في «قمت اتحركت»",
+  "٢٠ سمانة · ١٠ دوائر كتف · ١٠ إمالة حوض. الهدف "+MV_GOAL+" مرات"]);
  var cw=weekCardio(0);
  if(cw<CARDIO_WK)out.push(["🚴","كارديو الأسبوع <b>"+cw+" من "+CARDIO_WK+"</b> دقيقة",
   "فاضل "+(CARDIO_WK-cw)+" دقيقة على آخر السبت"]);
@@ -814,6 +832,7 @@ function scHome(){
   :"<b>الهدف ١٦٠ دقيقة في الأسبوع.</b> موزعة على الدراجة بعد الحديد + يوم التحمل + مشي التلات. المشي بيتحسب."));
  w.appendChild(cc);
 
+ w.appendChild(cardMove(dt,"النهارده"));
  var lw=lastWeight(),lws=lastWaist();
  var wc=el("div","card");
  wc.appendChild(el("div","ttl","⚖️ الوزن"));
@@ -939,6 +958,8 @@ function scHome(){
  w.appendChild(cardMeals(dt,"النهارده"));
  w.appendChild(cardSups(dt,"النهارده"));
  w.appendChild(cardHabits(dt,"النهارده"));
+ var vv=el("div","kv","النسخة "+APP_V);vv.style.textAlign="center";vv.style.marginTop="14px";vv.style.opacity=".6";
+ w.appendChild(vv);
  return w;}
 
 /* ===== التمرين ===== */
@@ -1089,13 +1110,6 @@ function scTrain(){
   "<div class='note bad'><b>الفترات آخر حاجة عشان تعملها وإنت فاضي، مش عشان تتساب.</b> "+
   "الأسبوع اللي فات عملت الحديد وسبت الفترات — والفترات هي الجزء اللي بيخدم الهدف الأساسي من اليوم ده. "+
   "<b>لو الوقت ضاق: اقص من الحديد مش من الكارديو</b>، أو اعمل ٤ جولات بدل ٨.</div>"));
- if(!p.light)w.appendChild(el("div","card",
-  "<div class='ttl'>🪑 وإنت قاعد بتشتغل</div>"+
-  "<div class='mini'>إنت شغال from home وقاعد أغلب اليوم. <b>كل ساعة قوم دقيقة</b> واعمل التلاتة دول — مش بديل عن التمرين، بس بيمنعوا الحوض والرجل إنهم يقفلوا:</div>"+
-  "<ul class='cues'><li><b>٢٠ سمانة وإنت قاعد</b> — السمانة مضخة بترجّع الدم من رجلك لقلبك</li>"+
-  "<li><b>١٠ دوائر كتف</b> — نفس إحماء الكتف، وكل ما تعمله أكتر الطقطقة بتقل أسرع</li>"+
-  "<li><b>١٠ إمالة حوض واقف</b> — بتفك قابضات الفخذ اللي بتتقفل من القعدة</li></ul>"+
-  "<div class='kv'>الشرح والصور كاملة في يوم التلات.</div>"));
  var lbl=(ymd(dt)===ymd(today()))?"النهارده":(esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()]));
  if(ymd(dt)!==ymd(today()))w.appendChild(el("div","note ok",
   "<b>إنت بتسجّل يوم "+lbl+".</b> التسجيل مفتوح لأي يوم — لو فاتك يوم، ارجعله وسجّله عادي."));
@@ -1103,6 +1117,7 @@ function scTrain(){
  w.appendChild(cardMeals(dt,lbl));
  w.appendChild(cardSups(dt,lbl));
  w.appendChild(cardWater(dt,lbl));
+ w.appendChild(cardMove(dt,lbl));
 
  if(p.upper){var shc=el("div","card");
   shc.appendChild(el("div","ttl","🔔 الكتف طقطق النهارده؟"));
@@ -1179,11 +1194,7 @@ function scFood(){
   "المية مابتكسرش الصيام — اشرب عادي قبل ١٢."));
  w.appendChild(watc);
 
- var sw=el("div","card");
- sw.appendChild(el("div","ttl","🔁 نفس المحل، طلب مختلف"));
- sw.appendChild(el("div","mini","طعمية ← <b>فول</b> · شاورما ← <b>فراخ مشوية</b> · كشري كبير ← <b>كشري صغير + بروتين</b> · رز أو مكرونة كطبق أساسي ← <b>جنب مش أساس</b> · سندوتشات وبيتزا ← <b>آخر اختيار</b>"));
- sw.appendChild(el("div","note","<b>متحسبش سعرات بدقة.</b> إنت بتاكل بره كل يوم فالحساب هيبقى تقديري وغلط وهتزهق منه. اتحكم في البروتين والنافذة والمشروبات — دول بيتحكموا في الباقي."));
- w.appendChild(sw);return w;}
+ return w;}
 
 /* ===== التقدم ===== */
 function chartOf(SRC,goal,color,unit){

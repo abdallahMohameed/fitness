@@ -235,6 +235,7 @@ function migrate(){
    delete o.ex[e];}}
  S.v=3;}
 migrate();
+
 var svT=null;
 function save(){writeAll(S);
  var b=readBak();if(!b||b.t!==ymd(new Date()))writeBak();
@@ -258,25 +259,27 @@ var DOWN=["الأحد","الاتنين","التلات","الأربعاء","ال�
 /* ===== التمارين ===== */
 function E(o){return o;}
 var PLAN={
- 0:{t:"ضهر وبايسبس + بطن",req:true,upper:true,fact:"عضلات الضهر بتغيّر الوقفة وشكل القميص — أول حاجة الناس بتلاحظها.",ex:[
-  {g:"أساسي",k:"Wide-Grip_Lat_Pulldown",ar:"سحب أمامي واسع",en:"Lat Pulldown",sets:3,reps:"١٠-١٢",
+ 0:{t:"ضهر + صدر علوي + بايسبس + بطن",req:true,upper:true,fact:"الضهر بيفرد الوقفة، والصدر العلوي بيعمل «الرفّ» اللي بيخلي الصدر مرسوم. التمرين ده بيشتغل على الاتنين — وده اللي بيفرق بين صدر «خط مستقيم» وصدر ليه شكل.",ex:[
+  {g:"١ — الكتف الأول (حماية + وقفة)",k:"Face_Pull",ar:"سحب للوش",en:"Face Pull",sets:3,reps:"١٥",
+   cues:["<b>أول تمرين عن قصد</b> — اتساب يوم ٢٠ عشان كان آخر الصفحة وإنت مستعجل","الكابل عند مستوى وشك","اسحب لحد جبهتك وافتح إيديك","<b>ده تمرين الوقفة والكتف</b> — بيفرد كتفك في الصور وبيحمي المفصل"],alt:"رفرفة خلفية"},
+  {g:"٢ — الضهر",k:"Wide-Grip_Lat_Pulldown",ar:"سحب أمامي واسع",en:"Lat Pulldown",sets:3,reps:"١٠-١٢",
    cues:["صدرك عالي وميلة خفيفة لورا — مش قعدة مستقيمة","اسحب البار لأعلى صدرك، <b>مش ورا رقبتك</b>","نزّل كتفك لتحت الأول بعدين اثني كوعك"],alt:"سحب بقبضة ضيقة"},
   {k:"Seated_Cable_Rows",ar:"تجديف قاعد بالكابل",en:"Seated Cable Row",sets:3,reps:"١٠-١٢",
    cues:["ضهرك مفرود وصدرك لقدام — متقوّسش","اسحب المقبض لبطنك مش لصدرك","اعصر لوحي كتفك مع بعض في الآخر"],alt:"تجديف بالماكينة"},
   {k:"One-Arm_Dumbbell_Row",ar:"تجديف دامبل بذراع",en:"One-Arm DB Row",sets:3,reps:"١٠-١٢",
    cues:["إيدك ورجلك على الدكة وضهرك موازي للأرض","اسحب الدامبل لجنب خصرك مش لصدرك","<b>متلفش جسمك</b> عشان ترفع أتقل"],alt:"تجديف بالماكينة بذراع"},
-  {g:"مساعد",k:"Straight-Arm_Pulldown",ar:"سحب مستقيم بالكابل",en:"Straight-Arm Pulldown",sets:3,reps:"١٢-١٥",
-   cues:["كوعك فيه ثنية بسيطة <b>ثابتة</b>","الحركة من الكتف مش من الكوع","ميلة خفيفة من الورك مش من الضهر"],alt:"نفس التمرين بالحبل"},
-  {k:"Face_Pull",ar:"سحب للوش",en:"Face Pull",sets:3,reps:"١٥",
-   cues:["الكابل عند مستوى وشك","اسحب لحد جبهتك وافتح إيديك","<b>ده تمرين الوقفة والكتف</b> — بيفرد كتفك في الصور وبيحمي المفصل"],alt:"رفرفة خلفية"},
-  {k:"Standing_Biceps_Cable_Curl",ar:"بايسبس بالكابل",en:"Cable Curl",sets:3,reps:"١٢",
+  {g:"٣ — الصدر العلوي (اليوم التاني في الأسبوع)",k:"Incline_Dumbbell_Press",ar:"ضغط دامبل مايل",en:"Incline DB Press",sets:3,reps:"١٠-١٢",
+   cues:["<b>الدكة على ٣٠ درجة</b> — ده الجزء اللي بيعمل «الرفّ» فوق الصدر","<b>٥ كجم خفيف عليك</b> — ضغط الماكينة عندك ٢٠. ابدأ بـ٧.٥ أو ١٠","الدامبل عند أعلى صدرك، وكوعك مايتفردش بعنف فوق","<b>مرتين في الأسبوع أحسن من مرة</b> لنفس عدد المجموعات — وده سبب وجوده هنا"],alt:"ضغط مايل بالماكينة"},
+  {k:"Pushups",ar:"ضغط",en:"Push-Ups",sets:3,reps:"للفشل",rs:"أقصى",
+   cues:["<b>في النص مش في الآخر</b> — آخر الصفحة كان بيتساب","جسمك خط مستقيم — متطلعش مؤخرتك","كوعك على ٤٥ درجة مش مفرود لبره","سجّل <b>عدد التكرارات</b> في الخانة — ده رقمك اللي هيتقارن","لو صعب: على حافة الدكة"],alt:"ضغط على دكة مايلة"},
+  {g:"٤ — بايسبس",k:"Standing_Biceps_Cable_Curl",ar:"بايسبس بالكابل",en:"Cable Curl",sets:3,reps:"١٢",
    cues:["كوعك ملزوق في جنبك ومايتحركش لقدام","وقف ثانية فوق واعصر","نزّل ببطء — <b>الرجعة نص التمرين</b>"],alt:"بايسبس بالبار"},
   {k:"Hammer_Curls",ar:"هامر بالدامبل",en:"Hammer Curl",sets:2,reps:"١٢",
    cues:["كف إيدك مواجه لجسمك طول الحركة","بيشتغل على سُمك الدراع مش الشكل بس","متهزش جسمك"],alt:"هامر بالحبل"},
-  {g:"بطن",k:"Cable_Crunch",ar:"طي البطن بالكابل (الجهاز اللي بتركع عليه)",en:"Cable Crunch",sets:3,reps:"١٥",
+  {g:"٥ — بطن (خط الـV)",k:"Knee_Hip_Raise_On_Parallel_Bars",ar:"رفع الركبة على المتوازي",en:"Captain's Chair Knee Raise",sets:3,reps:"١٢",
+   cues:["<b>ده تمرين الـV-cut</b> — بيشتغل على أسفل البطن اللي بيعمل الخط ده","ضهرك ملزوق في المسند، <b>ارفع حوضك لقدام</b> مش ركبتك بس","متتمرجحش — نزول بطيء","<b>بصراحة:</b> الخط بيبان عند نسبة دهون ~١٢٪. إنت ٣٢٪. التمرين بيبني العضلة دلوقتي عشان تبان لما الدهون تنزل"],alt:"رفع الرجل راقد على الدكة"},
+  {k:"Cable_Crunch",ar:"طي البطن بالكابل (الجهاز اللي بتركع عليه)",en:"Cable Crunch",sets:3,reps:"١٥",
    cues:["<b>ده هو نفسه الجهاز اللي بتركع عليه وتقفل بطنك بوزن — مش بديل، ده التمرين بعينه.</b>","<b>اطوي من ضهرك مش من وركك</b> — تخيل إنك بتقرّب صدرك من حوضك، مش بتنزل بجسمك كله","<b>وركك ثابت في مكانه</b> — لو بتتحرك لقدام ولورا يبقى بتشد من الورك مش من البطن","الحمل هنا هو اللي بيبني العضلة — الكرانش من غير وزن مش كفاية","اعصر في الآخر ثانية وارجع ببطء"],alt:"كرانش على الأرض بوزن على صدرك"},
-  {k:"Plank",ar:"بلانك",en:"Plank",sets:3,reps:"٣٠-٤٥ ثانية",
-   cues:["جسمك خط مستقيم من كتفك لكعبك","<b>متطلعش مؤخرتك ومتنزلهاش</b>","اشد بطنك ومؤخرتك مع بعض"],alt:"بلانك على الركب",nw:true},
   {g:"كارديو",k:"Elliptical_Trainer",ar:"دراجة أو إليبتيكال",en:"Bike / Elliptical",sets:1,reps:"٢٠ دقيقة",cardio:20,
    cues:["<b>بعد الحديد مش قبله</b>","شدة تخليك تتكلم بصعوبة بس تقدر","مفيش جري"],alt:"مشي مائل على المشاية — سرعة ٥ وميل ١٠-١٢٪",nw:true}]},
 
@@ -293,8 +296,8 @@ var PLAN={
    cues:["بيقوي جنب المؤخرة — <b>ده اللي بيثبّت الركبة</b>","حركة بطيئة، مفيش مرجحة","وقف ثانية في الآخر"],alt:"تبعيد بالحبل"},
   {k:"Standing_Calf_Raises",ar:"السمانة واقف",en:"Standing Calf Raise",sets:3,reps:"١٥",
    cues:["مقدمة رجلك على الحافة","انزل لأقصى مدى وارجع ببطء","ركبتك شبه مفرودة"],alt:"السمانة على ماكينة الرجل"},
-  {k:"Leg_Extensions",ar:"مد الرجل — اختياري",en:"Leg Extension",sets:3,reps:"١٥",
-   cues:["<b>وزن خفيف جداً ومدى جزئي — متفردش بالكامل</b>","الوسادة فوق الكاحل مش على الساق","<b>أي شد في الركبة = اشطب التمرين ده</b>"],alt:"لو في أي شك اشطبه — مش ضروري"},
+  {k:"Leg_Extensions",ar:"مد الرجل",en:"Leg Extension",sets:3,reps:"١٥",
+   cues:["<b>زوّد ٥ كجم بالكتير كل أسبوع</b> — من ٢٩ لـ٤٨ في أسبوع واحد كان سريع، حتى لو ماحستش بحاجة","مدى جزئي — متفردش الركبة بالكامل فوق","الوسادة فوق الكاحل مش على الساق","<b>أي شد في الركبة = اشطب التمرين ده</b>"],alt:"لو في أي شك اشطبه — مش ضروري"},
   {g:"بطن",k:"Dead_Bug",ar:"الحشرة الميتة",en:"Dead Bug",sets:3,reps:"١٠ لكل جنب",
    cues:["ضهرك ملزوق في الأرض طول الوقت","نزّل الرجل والذراع المتعاكسين ببطء","<b>لو ضهرك اتقوّس — قلّل المدى</b>"],alt:"بلانك",nw:true},
   {k:"Side_Bridge",ar:"بلانك جانبي",en:"Side Plank",sets:2,reps:"٣٠ ثانية لكل جنب",
@@ -321,20 +324,22 @@ var PLAN={
    cues:["جسمك خط مستقيم من الكتف للكاحل","ارفع حوضك عالي ومتسيبهوش ينزل","بيشد الجناب"],alt:"على الركبة",nw:true}]},
 
  3:{t:"صدر وترايسبس + بطن",req:true,upper:true,fact:"أكبر عضلات جزئك العلوي النهارده — من أعلى أيام الأسبوع في الحرق.",ex:[
-  {g:"أساسي",k:"Leverage_Chest_Press",ar:"ضغط صدر بالماكينة",en:"Chest Press",sets:3,reps:"١٠-١٢",
+  {g:"١ — الصدر العلوي الأول",k:"Incline_Dumbbell_Press",ar:"ضغط دامبل مايل",en:"Incline DB Press",sets:3,reps:"١٠-١٢",
+   cues:["<b>أول تمرين عن قصد</b> — الجزء العلوي هو اللي بيعمل الرسمة، والأول بياخد أقوى مجهود","الدكة على ٣٠ درجة مش أكتر","الدامبل عند أعلى صدرك، كوعك مايلزقش في جنبك ولا يتفرد بره","<b>الدامبل بيدي مدى أوسع من الماكينة</b>"],alt:"ضغط مايل بالماكينة"},
+  {g:"٢ — الصدر",k:"Leverage_Chest_Press",ar:"ضغط صدر بالماكينة",en:"Chest Press",sets:3,reps:"١٠-١٢",
    cues:["المقابض عند نص صدرك بالظبط","لوح كتفك مضغوط في المسند ورجلك ثابتة","انزل ببطء ثانيتين وادفع <b>من غير ما تفرد كوعك بعنف</b>"],alt:"ضغط صدر بالكابل"},
-  {k:"Incline_Dumbbell_Press",ar:"ضغط دامبل مايل",en:"Incline DB Press",sets:3,reps:"١٠-١٢",
-   cues:["الدكة على ٣٠ درجة مش أكتر","الدامبل عند أعلى صدرك، كوعك مايلزقش في جنبك ولا يتفرد بره","<b>الدامبل بيدي مدى أوسع من الماكينة</b>"],alt:"ضغط مايل بالماكينة"},
   {k:"Butterfly",ar:"تفتيح (بيك ديك) — مدى محدود",en:"Pec Deck",sets:2,reps:"١٢-١٥",
    cues:["<b>متفتحش أوسع من مستوى صدرك</b> — الفتح الزيادة بيشد مقدمة الكتف، وكتفك بيطقطق","كوعك فيه ثنية بسيطة ثابتة","اقفل واعصر ثانية في النص","<b>نزّلناه لمجموعتين</b>: النهارده فيه ٤ حركات دفع (ماكينة + دامبل + تفتيح + ضغط) — كتير على كتف بيطقطق"],alt:"تفتيح بالكابل بمدى أقصر"},
-  {g:"ترايسبس",k:"Triceps_Pushdown_-_Rope_Attachment",ar:"ترايسبس بالحبل",en:"Rope Pushdown",sets:3,reps:"١٢-١٥",
+  {k:"Pushups",ar:"ضغط",en:"Push-Ups",sets:3,reps:"للفشل",rs:"أقصى",
+   cues:["جسمك خط مستقيم — <b>متطلعش مؤخرتك</b>","كوعك على ٤٥ درجة من جسمك مش مفرود لبره","<b>للفشل</b> يعني لحد ما مش قادر تعمل تكرار نضيف — سجّل العدد في خانة الوزن","لو صعب: على الركب أو على حافة الدكة"],alt:"ضغط على الركب أو على دكة مايلة"},
+  {g:"٣ — ترايسبس",k:"Triceps_Pushdown_-_Rope_Attachment",ar:"ترايسبس بالحبل",en:"Rope Pushdown",sets:3,reps:"١٢-١٥",
    cues:["كوعك ملزوق في جنبك","افتح الحبل في الآخر واعصر","<b>ممنوع تدفع بوزن جسمك</b>"],alt:"نفس التمرين بالبار"},
   {k:"Cable_Rope_Overhead_Triceps_Extension",ar:"ترايسبس من فوق",en:"Overhead Extension",sets:3,reps:"١٢",
    cues:["الحبل من ورا راسك وكوعك عالي وثابت","<b>ده الجزء اللي بيدي حجم للدراع من ورا</b>","افرد بالكامل بس من غير قفل عنيف"],alt:"نفس التمرين بالدامبل"},
-  {g:"ختام + بطن",k:"Pushups",ar:"ضغط",en:"Push-Ups",sets:3,reps:"للفشل",rs:"أقصى",
-   cues:["جسمك خط مستقيم — <b>متطلعش مؤخرتك</b>","كوعك على ٤٥ درجة من جسمك مش مفرود لبره","<b>للفشل</b> يعني لحد ما مش قادر تعمل تكرار نضيف — سجّل العدد في خانة الوزن","لو صعب: على الركب أو على حافة الدكة"],alt:"ضغط على الركب أو على دكة مايلة"},
-  {k:"Flat_Bench_Lying_Leg_Raise",ar:"رفع الرجل راقد",en:"Lying Leg Raise",sets:3,reps:"١٢",
+  {g:"٤ — بطن (أسفل + جوانب)",k:"Flat_Bench_Lying_Leg_Raise",ar:"رفع الرجل راقد",en:"Lying Leg Raise",sets:3,reps:"١٢",
    cues:["أسفل ضهرك ملزوق في الدكة — <b>امسك جنب الدكة بإيدك</b>","نزّل رجلك ببطء ومتخليهاش توصل الأرض","لو ضهرك اتقوّس، اثني ركبتك شوية"],alt:"الحشرة الميتة",nw:true},
+  {k:"Air_Bike",ar:"دراجة البطن",en:"Bicycle Crunch",sets:3,reps:"٢٠ (١٠ لكل جنب)",
+   cues:["<b>الجوانب (Obliques)</b> — دي اللي بتحدد خط الـV من الجناب","كوعك يروح للركبة العكسية <b>ببطء</b> — السرعة بتشيل الشغل من البطن","أسفل ضهرك ملزوق في الأرض","<b>من غير وزن</b> — الجوانب بالوزن التقيل بتعرّض الوسط بدل ما تشده"],alt:"الحشرة الميتة"},
   {g:"كارديو",k:"Elliptical_Trainer",ar:"دراجة أو إليبتيكال",en:"Bike / Elliptical",sets:1,reps:"٢٠ دقيقة",cardio:20,
    cues:["<b>بعد الحديد</b>","شدة متوسطة لعالية","مفيش جري"],alt:"مشي مائل على المشاية",nw:true}]},
 
@@ -349,8 +354,8 @@ var PLAN={
    cues:["اطوي من ضهرك مش من وركك","<b>الحمل هنا بيبني العضلة</b>","اعصر في الآخر ثانية"],alt:"كرانش على الأرض"},
   {k:"Plank",ar:"بلانك",en:"Plank",sets:3,reps:"٣٠-٤٥ ثانية",
    cues:["جسمك خط مستقيم من كتفك لكعبك","<b>متطلعش مؤخرتك ومتنزلهاش</b>","اشد بطنك ومؤخرتك مع بعض"],alt:"بلانك على الركب",nw:true},
-  {k:"Side_Bridge",ar:"بلانك جانبي",en:"Side Plank",sets:2,reps:"٣٠ ثانية لكل جنب",
-   cues:["ارفع حوضك عالي ومتسيبهوش ينزل","بيشد الجناب","تنفّس عادي — متحبسش نفسك"],alt:"على الركبة",nw:true},
+  {k:"Standing_Cable_Wood_Chop",ar:"الحطّابة بالكابل",en:"Cable Wood Chop",sets:3,reps:"١٢ لكل جنب",
+   cues:["<b>الجوانب بحركة لف</b> — أحسن من الانحناء الجانبي بوزن اللي بيعرّض الوسط","الكابل من فوق لتحت بشكل مايل عبر جسمك","<b>اللف من الجذع</b>، دراعك مفرود شبه ثابت","ركبتك فيها ثنية بسيطة، ورجلك ثابتة"],alt:"اللفة الروسية"},
   {g:"كارديو",k:"Elliptical_Trainer",ar:"دراجة أو إليبتيكال",en:"Bike / Elliptical",sets:1,reps:"٢٠ دقيقة",cardio:20,
    cues:["<b>بعد الحديد</b>","شدة متوسطة","مفيش جري"],alt:"مشي مائل على المشاية",nw:true}]},
 
@@ -484,15 +489,20 @@ var SUPS=[
  {k:"creatine",t:"Creatine",d:"٣-٥ ج مع الشيك — كل يوم"},
  {k:"honey",t:"عسل سدر",d:"معلقة صغيرة مع الفطار"}
 ];
+/* auto: العادة بتتعلّم من كارت تاني — عشان ماتسجلش نفس الحاجة مرتين */
+var SUP_CORE=["vits","creatine","whey"];
 var CHECK=[
- {k:"sup",t:"💊 المكملات",d:"Daily Vits مع الفطار · Enera · الكرياتين مع الشيك"},
+ {k:"sup",t:"💊 المكملات",d:"بتتعلّم لوحدها لما Daily Vits والكرياتين والواي يتعلّموا",
+  auto:function(o){return SUP_CORE.every(function(x){return o.sup&&o.sup[x];});}},
  {k:"sugar",t:"🚫 صفر سكر وغازي",d:"الشاي والقهوة سادة · مفيش مشروبات غازية"},
- {k:"meals",t:"🍽️ الوجبات جوه النافذة",d:"٤ وجبات · آخرها قبل ٩ · بروتين في كل واحدة"},
+ {k:"meals",t:"🍽️ الوجبات الأربعة",d:"بتتعلّم لوحدها لما الوجبات الأربعة تتعلّم",
+  auto:function(o){return MEAL_IDS.every(function(x){return o.meal&&o.meal[x];});}},
  {k:"food",t:"🥗 خضار مرتين ومشوي مش مقلي",d:"مرة مع الفطار ومرة مع الغدا"},
  {k:"pelvic",t:"🔻 تمرين قاع الحوض",d:"٣ جولات × ١٠ — المدرب الموجّه تحت"},
  {k:"sleep",t:"😴 نوم ٧ ساعات",d:"الموبايل بره الأوضة · آخر قهوة قبل ٢"}
 ];
-function habDone(o){var n=0;CHECK.forEach(function(h){if(o.hab[h.k])n++;});return n;}
+function habOn(o,h){return h.auto?h.auto(o):!!o.hab[h.k];}
+function habDone(o){var n=0;CHECK.forEach(function(h){if(habOn(o,h))n++;});return n;}
 function mealDone(o){var n=0;for(var i=0;i<MEAL_IDS.length;i++)if(o.meal[MEAL_IDS[i]])n++;return n;}
 /* أيام فاتت من غير تسجيل — عشان ماتضيعش */
 function missed(){var out=[];
@@ -545,6 +555,32 @@ function fastLoss(){
  return (r1>SAFE_MAX&&r2>SAFE_MAX)?[r1,r2]:null;}
 
 /* الرقم اللي يبان جوه مربع المجموعة */
+/* أعلى رقم اتعمل في التمرين ده (مجموعة متعلّمة ✓ بس)، وآخر مرة قبل اليوم ده */
+function numOf(v){var t=String(v==null?"":v).replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632;});
+ var n=parseFloat(t);return isNaN(n)?null:n;}
+function recordOf(k,before){
+ var best=null,last=null,keys=Object.keys(S.d).sort();
+ keys.forEach(function(d){
+  var st=S.d[d]&&S.d[d].ex&&S.d[d].ex[k];if(!st)return;
+  var top=null;
+  if(st.mins&&numOf(st.mins))top=numOf(st.mins);
+  else (st.w||[]).forEach(function(v,i){var n=numOf(v);if(n!=null&&st.done&&st.done[i]&&(top==null||n>top))top=n;});
+  if(top==null)return;
+  if(!best||top>best.v)best={v:top,d:d};
+  if(d<before)last={v:top,d:d};});
+ return {best:best,last:last};}
+
+/* الكارديو بيتجمع من الدقايق الفعلية. لو مفيش دقايق مكتوبة والتمرين متعلّم ✓، بياخد رقم الخطة. */
+function recalcCardio(dt){
+ var o=day(dt),p=PLAN[dt.getDay()],tot=0;
+ if(p&&p.ex)p.ex.forEach(function(x){
+  if(!x.cardio)return;
+  var st=o.ex[x.k];if(!st)return;
+  var m=parseFloat(String(st.mins||"").replace(/[\u0660-\u0669]/g,function(c){return c.charCodeAt(0)-1632;}));
+  var did=st.done&&st.done.filter(Boolean).length;
+  if(m>0)tot+=m; else if(did)tot+=x.cardio;});
+ o.cardio=Math.round(tot);}
+
 function shortReps(x){
  if(x.rs)return x.rs;
  if(x.cardio)return "⏱";
@@ -565,7 +601,7 @@ function checkBadges(){
  if(wk.length>1&&S.ws[wk[0]]-S.ws[wk[wk.length-1]]>=3)b.waist=1;
  for(var o2=-8;o2<=0;o2++)if(weekCardio(o2)>=CARDIO_WK)b.cardio=1;
  for(var k in S.d){var o=S.d[k];
-  var h=0;CHECK.forEach(function(x){if(o.hab[x.k])h++;});
+  var h=0;CHECK.forEach(function(x){if(habOn(o,x))h++;});
   if(h===CHECK.length)b.hab=1;
   for(var e in o.ex)if((e.indexOf("Leg_")===0||e==="Barbell_Hip_Thrust"||e==="Romanian_Deadlift")
    &&o.ex[e].done&&o.ex[e].done.filter(Boolean).length)b.leg=1;}
@@ -596,7 +632,8 @@ function kegelToggle(kg,btn){
    rep++;rp.textContent=rep;
    if(rep>=10){rep=0;set++;
     if(set>3){clearInterval(kgT);kgT=null;btn.textContent="ابدأ تاني";btn.className="btn p";
-     cue.textContent="خلصت ✓";sub.textContent="٣ جولات × ١٠ — علّم العادة في القايمة فوق";
+     cue.textContent="خلصت ✓";sub.textContent="٣ جولات × ١٠ — العادة اتعلّمت لوحدها";
+     var od=day(today());od.hab.pelvic=true;save();
      st.textContent="3";rp.textContent="10";return;}
     st.textContent=set;rp.textContent="0";}}}
  step();kgT=setInterval(step,2000);}
@@ -665,8 +702,7 @@ function cardSups(dt,lbl){
   b.title=x.d;
   b.onclick=function(){
    o.sup[x.k]=!o.sup[x.k];
-   var all=true;SUPS.forEach(function(y){if(!o.sup[y.k])all=false;});
-   o.hab.sup=all;
+
    checkBadges();save();render();};
   g.appendChild(b);});
  c.appendChild(g);
@@ -688,15 +724,17 @@ function cardHabits(dt,lbl){
  t.appendChild(el("span",null,"✅ عادات "+lbl));
  var all=el("button","btn"+(n===N?" p":""),n===N?"شيل الكل":"كله ✓");
  all.onclick=function(){var on=n<N;
-  CHECK.forEach(function(h){o.hab[h.k]=on?true:false;});
+  CHECK.forEach(function(h){if(!h.auto)o.hab[h.k]=on?true:false;});
   checkBadges();save();render();};
  t.appendChild(all);c.appendChild(t);
  c.appendChild(el("div","kv",n+" من "+N));
  c.appendChild(el("div","bar","<i style='width:"+(n/N*100)+"%'></i>"));
  CHECK.forEach(function(h){
-  var r=el("div","row"),b=el("button","chk"+(o.hab[h.k]?" on":""),o.hab[h.k]?"✓":"");
-  b.onclick=function(){o.hab[h.k]=!o.hab[h.k];checkBadges();save();render();};
-  r.appendChild(b);r.appendChild(el("p",null,esc(h.t)+"<small>"+esc(h.d)+"</small>"));
+  var on=habOn(o,h),r=el("div","row"),b=el("button","chk"+(on?" on":""),on?"✓":(h.auto?"⚙":""));
+  if(h.auto){b.style.cursor="default";b.style.opacity=on?"1":".55";
+   b.setAttribute("aria-label",h.t+" — تلقائي");}
+  else b.onclick=function(){o.hab[h.k]=!o.hab[h.k];checkBadges();save();render();};
+  r.appendChild(b);r.appendChild(el("p",null,esc(h.t)+(h.auto?" <span class='kv'>· تلقائي</span>":"")+"<small>"+esc(h.d)+"</small>"));
   c.appendChild(r);});
  return c;}
 
@@ -737,14 +775,17 @@ function cardWater(dt,lbl){
  var o=day(dt),c=el("div","card");
  c.appendChild(el("div","ttl","<span>💧 مية "+esc(lbl)+"</span><span class='kv'>"+
   (o.water*BOTTLE_L).toFixed(1)+" / "+(BOTTLES*BOTTLE_L).toFixed(1)+" لتر</span>"));
- var wr=el("div","water");
- for(var i=0;i<BOTTLES;i++)(function(i){
-  var b=el("button","cup"+(i<o.water?" on":""),i<o.water?"✓":"");
-  b.setAttribute("aria-label","إزازة "+(i+1));
-  b.onclick=function(){o.water=(i<o.water)?i:i+1;save();render();};
-  wr.appendChild(b);})(i);
- c.appendChild(wr);
- c.appendChild(el("div","kv","كل مربع = إزازة نص لتر · الهدف ٣ لتر"));
+ [0,1].forEach(function(bi){
+  var row=el("div","qrow");row.style.alignItems="center";
+  row.appendChild(el("span","kv","إزازة "+(bi===0?"١":"٢")+" (١.٥ لتر)"));
+  var wr=el("div","water");wr.style.flex="1";
+  for(var j=0;j<3;j++)(function(j){
+   var i=bi*3+j,b=el("button","cup"+(i<o.water?" on":""),i<o.water?"✓":(j===0?"⅓":(j===1?"⅔":"كلها")));
+   b.setAttribute("aria-label","إزازة "+(bi+1)+" — "+(j+1)+" من ٣");
+   b.onclick=function(){o.water=(i<o.water)?i:i+1;save();render();};
+   wr.appendChild(b);})(j);
+  row.appendChild(wr);c.appendChild(row);});
+ c.appendChild(el("div","kv","<b>علّم الإزازة بقلم ٣ خطوط</b> — كل ما المية تنزل تحت خط، دوس مربع. مش محتاج تشرب مرة واحدة."));
  return c;}
 
 /* ===== النهارده ===== */
@@ -933,13 +974,13 @@ function scTrain(){
  if(!p.ex){
   c.appendChild(el("div","mini",p.rest));
   if(p.measure){
-   var mq=el("div","qrow");
-   var wi=document.createElement("input");wi.type="number";wi.step="0.1";wi.placeholder="الوزن";
-   var si=document.createElement("input");si.type="number";si.step="0.5";si.placeholder="الوسط سم";
-   var mb=el("button","btn p","حفظ");
-   mb.onclick=function(){var a=parseFloat(wi.value),b=parseFloat(si.value);
-    if(a>0)S.w[ymd(dt)]=a;if(b>0)S.ws[ymd(dt)]=b;checkBadges();save();render();};
-   mq.appendChild(wi);mq.appendChild(si);mq.appendChild(mb);c.appendChild(mq);
+   var tw=S.w[ymd(dt)],tws=S.ws[ymd(dt)];
+   c.appendChild(el("div","note"+(tw&&tws?" ok":""),
+    (tw&&tws)?("<b>اتسجل النهارده:</b> "+tw+" كجم · وسط "+tws+" سم ✓")
+    :("<b>الوزن والوسط بيتسجلوا من شاشة «النهارده» بس</b> — مكان واحد عشان ماتسجلش مرتين."+
+      (tw?" الوزن اتسجل ("+tw+").":"")+(tws?" الوسط اتسجل ("+tws+").":""))));
+   var gb=el("button","btn p","روح سجّل");gb.onclick=function(){scr="home";window.scrollTo(0,0);render();};
+   if(!(tw&&tws)){var gq=el("div","qrow");gq.appendChild(gb);c.appendChild(gq);}
    c.appendChild(el("div","note","<b>نفس النقطة كل مرة:</b> عند السرة، الصبح قبل الأكل، بعد زفير عادي من غير ما تشد بطنك. الشريط ملزوق مش مزنوق. أول أسبوعين بتظبط الطريقة — الفرق بين قياسين متقاربين غالباً طريقة مش دهون."));
    c.appendChild(el("div","note ok","<b>راحة كاملة مش معناها ماتتحركش.</b> اعمل حركات يوم التلات (دوائر الورك، تمدد القطة، دوائر الكتف، السمانة قاعد) + تمرين قاع الحوض. ١٠ دقايق في البيت، من غير جيم ومن غير أوزان."));
    c.appendChild(el("div","note","<b>محيط الوسط أهم من الميزان.</b> الميزان بيتحرك بالمية والملح والنوم، والشريط بيقيس الكرش نفسه. فيه أسابيع الوزن هيقف والشريط ينزل — وده نجاح مش ثبات."));
@@ -968,6 +1009,12 @@ function scTrain(){
   nm.onclick=function(){open[id]=!open[id];render();};
   head.appendChild(nm);box.appendChild(head);
 
+  var rc=recordOf(x.k,ymd(dt)),unit=x.cardio?" د":(x.k==="Pushups"?" تكرار":" كجم");
+  if(rc.best){
+   var fd=function(d){var q=d.split("-");return (+q[2])+"/"+(+q[1]);};
+   box.appendChild(el("div","kv","🏆 أعلى: <b style='color:var(--acid)'>"+rc.best.v+unit+"</b> ("+fd(rc.best.d)+")"+
+    (rc.last&&rc.last.d!==rc.best.d?" · آخر مرة: <b>"+rc.last.v+unit+"</b> ("+fd(rc.last.d)+")":
+     (rc.last?" · ده كان آخر مرة":""))));}
   box.appendChild(el("div","repbig",x.cardio
    ?("<b>"+esc(x.reps)+"</b>")
    :((x.sets>1?x.sets+" مجموعات":"مجموعة واحدة")+" × <b>"+esc(x.reps)+"</b>"+
@@ -992,7 +1039,9 @@ function scTrain(){
     var mi=document.createElement("input");mi.inputMode="decimal";
     mi.placeholder="دقايق فعلية";mi.value=st.mins||"";
     mi.setAttribute("aria-label","دقايق الكارديو الفعلية");
-    mi.oninput=function(){st.mins=mi.value;recalcCardio(dt);save();};
+    mi.oninput=function(){st.mins=mi.value;
+     if(parseFloat(mi.value)>0||/[\u0660-\u0669]/.test(mi.value))st.done[0]=true;
+     recalcCardio(dt);save();};
     mi.onblur=function(){render();};
     s.appendChild(mi);}
    sets.appendChild(s);})(i);
@@ -1509,6 +1558,50 @@ function render(){
   b.onclick=function(){scr=s[0];open={};window.scrollTo(0,0);render();};
   nav.appendChild(b);});
  document.getElementById("sv").innerHTML=statusTxt();}
+/* إصلاح ٢٢ سبتمبر: الدقايق اللي اتكتبت ماكانتش بتتحسب (الدالة كانت ناقصة).
+   بيتعاد الحساب للأيام اللي فيها دقايق مكتوبة بس — الأيام القديمة ماتتلمسش. */
+(function repairCardio(){
+ if(S.fix_cardio)return;
+ for(var k in S.d){var o=S.d[k];if(!o||!o.ex)continue;
+  var has=false;for(var e in o.ex)if(o.ex[e]&&o.ex[e].mins)has=true;
+  if(!has)continue;
+  var p=k.split("-"),dt=new Date(+p[0],+p[1]-1,+p[2],12);
+  recalcCardio(dt);}
+ S.fix_cardio=1;})();
+save();
+/* ===== مراجعة ٢٢ سبتمبر — v3 ← v4 =====
+   ١. أيام فاضية بالكامل قبل بداية البرنامج أو في المستقبل = آثار تصفح، بتتشال.
+      الأيام الفاضية بين البداية والنهارده بتفضل — دي معناها «يوم فات».
+   ٢. التمارين الفاضية جوه يوم تمرين حقيقي بتفضل — دي إشارة «اتساب» ومهمة للتحليل.
+   ٣. الورك المستحيل بيتنقل لأرشيف (S.bad) — مابيتمسحش.
+   ٤. العادات القديمة بالأرقام بتاخد مقابلها بالمفاتيح النصية — الأرقام بتفضل للتاريخ. */
+(function v4(){
+ if(S.v>=4)return;
+ var START="2026-09-13",TODAY=ymd(today());
+ function exInfo(v){return v&&((v.w||[]).join("").trim()||(v.done||[]).some(Boolean)||v.mins||v.m);}
+ function dayInfo(o){if(!o)return false;
+  for(var e in o.ex||{})if(exInfo(o.ex[e]))return true;
+  for(var h in o.hab||{})if(o.hab[h])return true;
+  for(var m in o.meal||{})if(o.meal[m])return true;
+  for(var u in o.sup||{})if(o.sup[u])return true;
+  for(var b in o.sub||{})if(o.sub[b])return true;
+  return !!(o.water||o.cardio||o.med||o.sh!=null);}
+ for(var k in S.d){
+  if(k===TODAY)continue;
+  if((k<START||k>TODAY)&&!dayInfo(S.d[k]))delete S.d[k];}
+ S.bad=S.bad||{};
+ for(var h in S.hp){var ws=S.ws[h]||lastWaist();
+  if(S.hp[h]<70||(ws&&S.hp[h]<ws-15)){(S.bad.hp=S.bad.hp||{})[h]=S.hp[h];delete S.hp[h];}}
+ for(var d in S.d){var o=S.d[d],hb=o.hab||{};
+  var num=false,str=false;for(var q in hb){if(/^\d+$/.test(q))num=true;else str=true;}
+  if(!num||str)continue;
+  var H=function(i){return !!(hb[i]||hb[String(i)]);};
+  if(H(0)&&H(1))hb.sugar=true;
+  if(H(4))hb.food=true;
+  if(H(5))hb.pelvic=true;
+  if(H(6))hb.sleep=true;}
+ S.v=4;})();
+save();
 checkBadges();render();
 try{showPop();}catch(e){}   /* التنبيه اليومي — مرة واحدة كل يوم */
 })();

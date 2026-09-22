@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.2 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v4.3 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -1050,8 +1050,10 @@ function scTrain(){
  p.ex.forEach(function(x,xi){
   if(x.g)c.appendChild(el("div","grp",esc(x.g)));
   var id=x.k;   /* مفتاح ثابت — إضافة أو إعادة ترتيب التمارين مابتحركش الداتا القديمة */
-  if(!o.ex[id])o.ex[id]={w:[],done:[]};
-  var st=o.ex[id],box=el("div","ex"),head=el("div","exhead");
+  /* مابيتسجلش حاجة لمجرد إنك فتحت اليوم — عشان إشارة «اتساب» تفضل صادقة */
+  var st=o.ex[id]||{w:[],done:[]},box=el("div","ex"),head=el("div","exhead");
+  var touch=function(){if(!o.ex[id])o.ex[id]=st;
+   if(!o.plan)o.plan=p.ex.filter(function(y){return !y.bx;}).map(function(y){return y.k;});};
   head.appendChild(el("div","dot"+(st.done.filter(Boolean).length>=x.sets?" on":"")));
   var nm=el("button","exname","<b>"+esc(x.ar)+"</b>"+(x.bx?" <span class='tag bon'>بونس</span>":"")+"<span>"+esc(x.en)+" <span class='more'>"+
    (open[id]?"▲ اقفل":"▼ الشرح والصور")+"</span></span>");
@@ -1076,7 +1078,7 @@ function scTrain(){
    var s=el("div","set");
    var b=el("button","setchk"+(st.done[i]?" on":""),st.done[i]?"✓":shortReps(x));
    b.setAttribute("aria-label","مجموعة "+(i+1)+" "+x.ar+" — "+x.reps);
-   b.onclick=function(){st.done[i]=!st.done[i];
+   b.onclick=function(){touch();st.done[i]=!st.done[i];
     if(x.cardio)recalcCardio(dt);
     checkBadges();save();render();};
    s.appendChild(b);
@@ -1084,13 +1086,13 @@ function scTrain(){
     var ip=document.createElement("input");ip.inputMode="decimal";ip.placeholder="كجم";
     ip.setAttribute("aria-label","وزن مجموعة "+(i+1));ip.value=st.w[i]||"";
     if(x.k==="Pushups")ip.placeholder="عدد";
-    ip.oninput=function(){st.w[i]=ip.value;save();};
+    ip.oninput=function(){touch();st.w[i]=ip.value;save();};
     s.appendChild(ip);}
    if(x.cardio){
     var mi=document.createElement("input");mi.inputMode="decimal";
     mi.placeholder="دقايق فعلية";mi.value=st.mins||"";
     mi.setAttribute("aria-label","دقايق الكارديو الفعلية");
-    mi.oninput=function(){st.mins=mi.value;
+    mi.oninput=function(){touch();st.mins=mi.value;
      if(parseFloat(mi.value)>0||/[\u0660-\u0669]/.test(mi.value))st.done[0]=true;
      recalcCardio(dt);save();};
     mi.onblur=function(){render();};
@@ -1116,7 +1118,7 @@ function scTrain(){
     var mrow=el("div","sets");
     CARDIO_M.forEach(function(m){
      var mb=el("button","btn"+(st.m===m[0]?" p":""),m[1]);
-     mb.onclick=function(){st.m=(st.m===m[0])?null:m[0];save();render();};
+     mb.onclick=function(){touch();st.m=(st.m===m[0])?null:m[0];save();render();};
      mrow.appendChild(mb);});
     pn.appendChild(mrow);
     var sel=null;for(var mi=0;mi<CARDIO_M.length;mi++)if(CARDIO_M[mi][0]===st.m)sel=CARDIO_M[mi];
@@ -1645,6 +1647,21 @@ save();
   if(H(5))hb.pelvic=true;
   if(H(6))hb.sleep=true;}
  S.v=4;})();
+save();
+/* ===== v4 ← v5 (٢٢ سبتمبر) =====
+   التصفح لأيام قديمة بعد تغيير الخطة كان بيعمل إدخالات فاضية لتمارين ماكانتش في خطة اليوم ده،
+   فكانت بتبان «اتسابت» وهي ماكانتش موجودة أصلاً. دي القايمة اللي اتأكدت منها بمقارنة تاريخ كل تعديل. */
+(function v5(){
+ if(S.v>=5)return;
+ var BAD={"2026-09-13":["Cable_Crunch","Plank"],"2026-09-14":["Dead_Bug","Side_Bridge"],
+          "2026-09-18":["Russian_Twist"]};
+ function empty(v){return !v||!((v.w||[]).join("").trim()||(v.done||[]).some(Boolean)||v.mins||v.m);}
+ for(var d in BAD){var o=S.d[d];if(!o||!o.ex)continue;
+  BAD[d].forEach(function(k){if(empty(o.ex[k]))delete o.ex[k];});}
+ var T=ymd(today()),ot=S.d[T],pt=PLAN[today().getDay()];
+ if(ot&&ot.ex&&pt&&pt.ex){var keep={};pt.ex.forEach(function(x){keep[x.k]=1;});
+  for(var k in ot.ex)if(!keep[k]&&empty(ot.ex[k]))delete ot.ex[k];}
+ S.v=5;})();
 save();
 checkBadges();render();
 try{showPop();}catch(e){}   /* التنبيه اليومي — مرة واحدة كل يوم */

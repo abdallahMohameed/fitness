@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.6 · ٢٥ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v4.7 · ٢٥ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -606,6 +606,54 @@ function recordOf(k,before){
   if(!best||top>best.v)best={v:top,d:d};
   if(d<before)last={v:top,d:d};});
  return {best:best,last:last};}
+
+/* ===== تحليل تلقائي — كله من الداتا الموجودة، صفر ضغطات زيادة =====
+   تحذير مدمج: لو كل الضغطات اتعملت في أقل من ١٠ دقايق ومعاها ٦ مجموعات فأكتر،
+   يبقى التسجيل اتعمل بعد التمرين — والوقت والراحة مش صالحين للقراية. */
+function hhmm(m){var h=Math.floor(m/60),x=m%60;return h+":"+(x<10?"0":"")+x;}
+function timing(dtKey){
+ var o=S.d[dtKey];if(!o||!o.ex)return null;
+ var all=[],per={};
+ for(var k in o.ex){var st=o.ex[k];if(!st.t)continue;
+  var ts=[];for(var i=0;i<st.t.length;i++)if(st.t[i]!=null&&st.done&&st.done[i])ts.push(st.t[i]);
+  if(ts.length){per[k]=ts.slice().sort(function(a,b){return a-b;});all=all.concat(ts);}}
+ if(all.length<2)return null;
+ all.sort(function(a,b){return a-b;});
+ var dur=all[all.length-1]-all[0],gaps=[];
+ for(var k2 in per){var t=per[k2];for(var j=1;j<t.length;j++){var g=t[j]-t[j-1];if(g>0&&g<=8)gaps.push(g);}}
+ gaps.sort(function(a,b){return a-b;});
+ var med=gaps.length?gaps[Math.floor(gaps.length/2)]:null;
+ return {start:all[0],end:all[all.length-1],dur:dur,sets:all.length,rest:med,
+         valid:!(dur<10&&all.length>=6)};}
+
+/* الحجم الكلي = مجموع (وزن × مجموعة متعلّمة). أصدق من «أعلى وزن». */
+function volumeOf(k,dtKey){var st=S.d[dtKey]&&S.d[dtKey].ex&&S.d[dtKey].ex[k];if(!st)return 0;
+ var v=0;(st.w||[]).forEach(function(x,i){var n=numOf(x);if(n!=null&&st.done&&st.done[i])v+=n;});return v;}
+
+/* دفع مقابل سحب — مرتبط مباشرة بالكتف */
+var PUSH=["Incline_Dumbbell_Press","Leverage_Chest_Press","Butterfly","Pushups",
+ "Triceps_Pushdown_-_Rope_Attachment","Cable_Rope_Overhead_Triceps_Extension",
+ "Leverage_Shoulder_Press","Side_Lateral_Raise"];
+var PULL=["Wide-Grip_Lat_Pulldown","Seated_Cable_Rows","One-Arm_Dumbbell_Row","Face_Pull",
+ "Reverse_Machine_Flyes","Standing_Biceps_Cable_Curl","Hammer_Curls","Straight-Arm_Pulldown"];
+function pushPull(weeks){
+ var lim=ymd(addD(today(),-7*(weeks||1))),ps=0,pl=0;
+ for(var d in S.d){if(d<lim)continue;var o=S.d[d];
+  for(var k in o.ex||{}){var n=((o.ex[k].done)||[]).filter(Boolean).length;
+   if(PUSH.indexOf(k)>=0)ps+=n;else if(PULL.indexOf(k)>=0)pl+=n;}}
+ return {push:ps,pull:pl,ratio:ps?+(pl/ps).toFixed(2):null};}
+
+/* تمارين واقفة: آخر ٣ جلسات نفس أعلى وزن */
+function stalled(){
+ var hist={},out=[];
+ Object.keys(S.d).sort().forEach(function(d){
+  var o=S.d[d];for(var k in o.ex||{}){var st=o.ex[k],top=null;
+   (st.w||[]).forEach(function(x,i){var n=numOf(x);if(n!=null&&st.done&&st.done[i]&&(top==null||n>top))top=n;});
+   if(top!=null)(hist[k]=hist[k]||[]).push(top);}});
+ var names={};Object.keys(PLAN).forEach(function(dn){(PLAN[dn].ex||[]).forEach(function(x){names[x.k]=x.ar;});});
+ for(var k in hist){var h=hist[k];
+  if(h.length>=3&&h[h.length-1]<=h[h.length-3]&&names[k])out.push({k:k,ar:names[k],v:h[h.length-1],n:h.length});}
+ return out;}
 
 /* قاعدة التدرج: خلّصت كل المجموعات بنفس الوزن الأعلى في مجموعتين على الأقل ← زوّد.
    مد الرجل ٥ كجم بالكتير في الأسبوع. الباقي +٢.٥. */
@@ -1144,6 +1192,10 @@ function scTrain(){
     (rc.last&&rc.last.d!==rc.best.d?" · آخر مرة: <b>"+rc.last.v+unit+"</b> ("+fd(rc.last.d)+")":
      (rc.last?" · ده كان آخر مرة":""))));}
   if(hint)box.appendChild(el("div","kv",hint));
+  if(!x.cardio&&!x.nw){var vk=Object.keys(S.d).filter(function(z){return z<ymd(dt)&&volumeOf(x.k,z)>0;}).sort();
+   if(vk.length>=2){var v1=volumeOf(x.k,vk[vk.length-2]),v2=volumeOf(x.k,vk[vk.length-1]);
+    box.appendChild(el("div","kv","📊 الحجم الكلي: "+v1+" ← <b>"+v2+"</b> "+(v2>v1?"↑":(v2<v1?"↓":"→"))+
+     " <span style='opacity:.7'>(مجموع الأوزان — أصدق من أعلى مجموعة)</span>"));}}
   box.appendChild(el("div","repbig",x.cardio
    ?("<b>"+esc(x.reps)+"</b>")
    :((x.sets>1?x.sets+" مجموعات":"مجموعة واحدة")+" × <b>"+esc(x.reps)+"</b>"+
@@ -1155,6 +1207,8 @@ function scTrain(){
    var b=el("button","setchk"+(st.done[i]?" on":""),st.done[i]?"✓":shortReps(x));
    b.setAttribute("aria-label","مجموعة "+(i+1)+" "+x.ar+" — "+x.reps);
    b.onclick=function(){touch();st.done[i]=!st.done[i];
+    if(!st.t)st.t=[];
+    if(st.done[i]){var nw=new Date();st.t[i]=nw.getHours()*60+nw.getMinutes();}else st.t[i]=null;
     if(x.cardio)recalcCardio(dt);
     checkBadges();save();render();};
    s.appendChild(b);
@@ -1373,6 +1427,45 @@ function scProg(){
   mc.appendChild(r);});
  mc.appendChild(el("div","note","<b>المرحلة بتتجدد كل ٤ أسابيع لوحدها.</b> الأهداف دي بتتصفّر مع كل مرحلة — أما الإنجازات اللي تحت فدايمة وماتتمسحش."));
  w.appendChild(mc);
+
+ /* ===== تحليل تلقائي ===== */
+ var days=Object.keys(S.d).sort().reverse(),tms=[];
+ for(var i=0;i<days.length&&tms.length<5;i++){var t=timing(days[i]);if(t)tms.push([days[i],t]);}
+ var tc=el("div","card");
+ tc.appendChild(el("div","ttl","⏱️ التمرينة — من ضغطاتك"));
+ if(!tms.length)tc.appendChild(el("div","mini","لسه مافيش توقيت. بيتسجل لوحده مع كل ✓ من النسخة دي ورايح."));
+ else{
+  var fd2=function(x){var q=x.split("-");return (+q[2])+"/"+(+q[1]);};
+  tms.forEach(function(x){var t=x[1];
+   tc.appendChild(el("div","mini",
+    "<b>"+fd2(x[0])+"</b> · بدأت <b>"+hhmm(t.start)+"</b> · "+
+    (t.valid?("طولت <b>"+t.dur+" دقيقة</b> · راحة ~<b>"+(t.rest!=null?t.rest+" د":"—")+"</b>")
+            :"<span style='color:var(--dim)'>اتسجلت بعد التمرين — الوقت مش صالح</span>")+
+    " · "+t.sets+" مجموعة"));});
+  var vd=tms.filter(function(x){return x[1].valid;});
+  if(vd.length>=2){var av=Math.round(vd.reduce(function(a,x){return a+x[1].dur;},0)/vd.length);
+   var rs=vd.filter(function(x){return x[1].rest!=null;});
+   var ar=rs.length?Math.round(rs.reduce(function(a,x){return a+x[1].rest;},0)/rs.length):null;
+   tc.appendChild(el("div","note","<b>المتوسط: "+av+" دقيقة</b>"+(ar!=null?" · راحة ~"+ar+" دقيقة بين المجموعات":"")+". "+
+    (av>85?"اليوم طويل — ده بيفسّر إن آخر تمرينين بيتسابوا.":"الوقت معقول.")+
+    (ar!=null&&ar<1?" <b>والراحة قصيرة جداً</b> — الأوزان اللي بتقفزها ممكن تكون مضخّمة، خد ٩٠-١٢٠ ثانية على الحركات التقيلة.":"")));}}
+ w.appendChild(tc);
+
+ var pp=pushPull(1),pc2=el("div","card");
+ pc2.appendChild(el("div","ttl","<span>⚖️ دفع مقابل سحب</span><span class='kv'>آخر ٧ أيام</span>"));
+ pc2.appendChild(el("div","mini","دفع <b>"+pp.push+"</b> مجموعة · سحب <b>"+pp.pull+"</b> مجموعة"+
+  (pp.ratio!=null?" · النسبة <b>"+pp.ratio+"</b>":"")));
+ if(pp.ratio!=null)pc2.appendChild(el("div","note"+(pp.ratio>=1?" ok":" bad"),
+  pp.ratio>=1?"<b>متوازن.</b> السحب مساوي أو أكتر من الدفع — وده اللي بيحمي الكتف."
+   :"<b>الدفع أكتر من السحب.</b> ده من أشهر الأسباب الميكانيكية لمشاكل الكتف — والكتف بتاعك بيطقطق. الحل: زوّد سحب الوش والرفرفة الخلفية والتجديف، مش تقلل الصدر."));
+ w.appendChild(pc2);
+
+ var stl=stalled();
+ if(stl.length){var sc2=el("div","card");
+  sc2.appendChild(el("div","ttl","⏸️ تمارين واقفة — ٣ جلسات أو أكتر"));
+  stl.forEach(function(x){sc2.appendChild(el("div","mini","<b>"+esc(x.ar)+"</b> — واقف على "+x.v+" من "+x.n+" جلسة"));});
+  sc2.appendChild(el("div","note","التدرج هو اللي بيبني العضل. لو الوزن مش راضي يزيد، غيّر المنبّه: تكرارات أكتر، أو راحة أقل، أو بديل التمرين."));
+  w.appendChild(sc2);}
 
  var bc=el("div","card");
  bc.appendChild(el("div","ttl","🎖️ إنجازات دايمة"));

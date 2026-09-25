@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.3 · ٢٢ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v4.4 · ٢٥ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -218,7 +218,7 @@ function writeBak(){if(MODE!=="local")return;
 var S=readAll();
 if(!S||!S.d){var bk=readBak();if(bk)S=bk.s;}   /* الأساسي باظ؟ رجّع من النسخة الاحتياطية */
 if(!S)S={v:3,w:{},ws:{},d:{},b:{}};
-["w","ws","hp","ch","d","b"].forEach(function(k){if(!S[k])S[k]={};});
+["w","ws","hp","ch","th","d","b"].forEach(function(k){if(!S[k])S[k]={};});
 
 /* ===== ترقية v2 ← v3: بتعدّل في مكانها، مفيش استبدال ولا مسح ===== */
 function migrate(){
@@ -514,6 +514,7 @@ function firstWeight(){var k=Object.keys(S.w).sort();return k.length?S.w[k[0]]:n
 function lastWaist(){var k=Object.keys(S.ws).sort();return k.length?S.ws[k[k.length-1]]:null;}
 function lastHip(){var k=Object.keys(S.hp).sort();return k.length?S.hp[k[k.length-1]]:null;}
 function lastChest(){var k=Object.keys(S.ch).sort();return k.length?S.ch[k[k.length-1]]:null;}
+function lastThigh(){var k=Object.keys(S.th).sort();return k.length?S.th[k[k.length-1]]:null;}
 /* نسبة الوسط للصدر — المحدد الأساسي لجاذبية جسم الراجل (Maisey 1999). الأجذب ~٠.٧٠ */
 var WCR_GOAL=0.70;
 function wcrSeries(){var o={};Object.keys(S.ch).forEach(function(d){
@@ -895,6 +896,14 @@ function scHome(){
    ". دي أهم رقم لهدف «العضلات الجذابة» — بتنزل من ناحيتين: الوسط بالأكل والكارديو، والصدر والضهر بالحديد."));}
  else if(lws&&!lch)sw.appendChild(el("div","note",
   "<b>قيس محيط الصدر مرة:</b> تحت الإبط، على أعرض نقطة في الصدر، والشريط أفقي من ورا عند لوحي الكتف. إيديك مرخية جنبك وتنفّس عادي."));
+ var lth=lastThigh();
+ var q5=el("div","qrow"),ti=document.createElement("input");
+ ti.type="number";ti.step="0.5";ti.placeholder=lth?("الفخذ "+lth+" سم"):"الفخذ سم";
+ ti.setAttribute("aria-label","محيط الفخذ");
+ var tb=el("button","btn","حفظ الفخذ");
+ tb.onclick=function(){var v=parseFloat(ti.value);if(v>30){S.th[ymd(dt)]=v;save();render();}};
+ q5.appendChild(ti);q5.appendChild(tb);sw.appendChild(q5);
+ if(lth)sw.appendChild(el("div","kv","الفخذ عند أعرض نقطة، واقف ووزنك على الرجلين. <b>ده مؤشر العضل:</b> لو الفخذ ثابت أو بيكبر والوسط بينزل — إنت ماشي صح بالظبط."));
  var lhp=lastHip();
  var q3=el("div","qrow"),hi=document.createElement("input");
  hi.type="number";hi.step="0.5";hi.placeholder=lhp?("الورك "+lhp+" سم"):"الورك سم";
@@ -1255,6 +1264,9 @@ function scProg(){
  var c0=el("div","card");
  c0.appendChild(el("div","ttl","📏 محيط الوسط"));
  c0.appendChild(chartOf(S.ws,null,"#5CC8FF","سم"));
+ if(Object.keys(S.th).length){c0.appendChild(el("div","ttl","🦵 محيط الفخذ"));
+  c0.appendChild(chartOf(S.th,null,"#FF9F5C","سم"));
+  c0.appendChild(el("div","mini","الفخذ ثابت أو بيكبر + الوسط بينزل = <b>عضل محفوظ ودهون بتنزل</b>. الاتنين بينزلوا = العجز كبير."));}
  var wser=wcrSeries();
  if(Object.keys(wser).length){c0.appendChild(el("div","ttl","📐 نسبة الوسط للصدر"));
   c0.appendChild(chartOf(wser,WCR_GOAL,"#C6FF3A",""));}

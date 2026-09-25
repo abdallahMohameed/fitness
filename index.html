@@ -193,7 +193,7 @@ textarea{width:100%;height:100px;background:var(--surf2);border:1px solid var(--
 "use strict";
 var IMG="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 var WED=new Date(2026,10,6), GOAL_START=84.5, GOAL_END=77.5, CARDIO_WK=160;
-var PROT_LO=145, PROT_HI=160;              /* الهدف العملي — خطة v1 */
+var PROT_LO=140, PROT_HI=155;              /* الهدف العملي — خطة v1 */
 var SAFE_MAX=0.85;                          /* أقصى نزول آمن كجم/أسبوع */
 var BOTTLES=6, BOTTLE_L=0.5;                /* ٦ أزايز نص لتر = ٣ لتر */
 var PHASE_START=new Date(2026,8,13), PHASE_WKS=4;  /* المرحلة ٤ أسابيع، بدأت ١٣ سبتمبر */
@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.5 · ٢٥ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v4.6 · ٢٥ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -409,6 +409,39 @@ var HABITS=[
 var MEAL_V="٣ — ١٦ سبتمبر ٢٠٢٦ (بعد جلسة التغذية)";
 var KCAL=1900;
 var MEAL_IDS=["m1","m2","m3","m4"];
+/* جدول البروتين — مبني على أكلك إنت. الرقم جرام بروتين للحصة المكتوبة.
+   التقريب المتسق أنفع من الدقة المتقطعة: الأرقام دي تقديرات معقولة مش معمل تحاليل. */
+var FOODS=[
+ {k:"egg",  t:"بيضة",            g:6},
+ {k:"fool", t:"كوب فول",         g:13},
+ {k:"aish", t:"نص رغيف بلدي",    g:4},
+ {k:"q4",   t:"ربع فرخة",        g:30},
+ {k:"h2",   t:"نص فرخة",         g:60},
+ {k:"sadr", t:"صدور ٢٠٠ج",       g:45},
+ {k:"kofta",t:"كفتة (٤ أصابع)",  g:25},
+ {k:"mix",  t:"ميكس جريل",       g:45},
+ {k:"shaw", t:"شاورما سندوتش",   g:25},
+ {k:"ksand",t:"ساندوتش كفتة",    g:20},
+ {k:"tuna", t:"علبة تونة",       g:25},
+ {k:"kebda",t:"كبدة ١٥٠ج",       g:30},
+ {k:"samak",t:"سمك مشوي ١٥٠ج",   g:32},
+ {k:"zab",  t:"زبادي",           g:7},
+ {k:"zabg", t:"زبادي يوناني",    g:17},
+ {k:"laban",t:"كوب لبن",         g:8},
+ {k:"gebna",t:"جبنة بيضا ٥٠ج",   g:9},
+ {k:"whey1",t:"سكوب واي",        g:24},
+ {k:"whey5",t:"نص سكوب واي",     g:12},
+ {k:"shake",t:"بروتين شيك جاهز", g:20},
+ {k:"kosh", t:"كشري وسط",        g:12},
+ {k:"taam", t:"طعمية ٣ أقراص",   g:8},
+ {k:"roz",  t:"كوب رز",          g:4},
+ {k:"batt", t:"بطاطس",           g:3},
+ {k:"salad",t:"سلطة/خضار",       g:2}
+];
+function foodG(k){for(var i=0;i<FOODS.length;i++)if(FOODS[i].k===k)return FOODS[i].g;return 0;}
+function foodT(k){for(var i=0;i<FOODS.length;i++)if(FOODS[i].k===k)return FOODS[i].t;return k;}
+function mealPro(o,id){var a=(o.pi||{})[id]||[],n=0;a.forEach(function(k){n+=foodG(k);});return n;}
+function dayPro(o){var n=0;MEAL_IDS.forEach(function(m){n+=mealPro(o,m);});return n;}
 var WHEY_OK=true;    /* ١٩ سبتمبر: قرار إلغاء التحاليل — الواي والكرياتين بيبدأوا */
 
 var MEALS_GYM=[
@@ -471,6 +504,7 @@ var scr="home",weekOff=0,dayOff=0,open={};
 function day(dt){var k=ymd(dt);if(!S.d[k])S.d[k]={ex:{},hab:{},meal:{},water:0,cardio:0};
  if(!S.d[k].sub)S.d[k].sub={};
  if(!S.d[k].sup)S.d[k].sup={};
+ if(!S.d[k].pi)S.d[k].pi={};
  var o=S.d[k];if(!o.ex)o.ex={};if(!o.hab)o.hab={};if(!o.meal)o.meal={};
  if(o.water==null)o.water=0;if(o.cardio==null)o.cardio=0;return o;}
 function curDate(){return addD(today(),weekOff*7+dayOff);}
@@ -481,7 +515,6 @@ function goDay(dt){weekOff=0;dayOff=Math.round((noon(dt)-today())/864e5);scr="tr
 /* المكملات: كل واحد بمفتاح ثابت — بيتسجل أنهي واحد اتاخد بالظبط كل يوم */
 var SUPS=[
  {k:"vits",t:"Daily Vits",d:"كبسولة مع الفطار ١٢ظ"},
- {k:"enera",t:"Enera Collagen",d:"كيس في ٢٠٠-٢٥٠ مل مية"},
  {k:"whey",t:"Whey",d:"سكوب ونص ٨:٤٥ في الجيم"},
  {k:"creatine",t:"Creatine",d:"٣-٥ ج مع الشيك — كل يوم"},
  {k:"honey",t:"عسل سدر",d:"معلقة صغيرة مع الفطار"}
@@ -796,6 +829,31 @@ function cardMeals(dt,lbl){
  c.appendChild(el("div","note","<b>الخانة اللي تحت كل وجبة للأكل الفعلي.</b> لو كلت حاجة تانية، اكتبها — حتى لو «كشري وسط» أو «مأكلتش». الـexport بيطلع بيها، وبنعرف منها ليه الأسبوع طلع كده."));
  return c;}
 
+/* اختيار الأكل الفعلي — دوس على اللي أكلته والبروتين بيتجمع لوحده.
+   السبب: أي حاجة بره الخطة كان بروتينها مجهول، فالمجموع اليومي كان تخمين. */
+function proPicker(o,id,dt){
+ if(!o.pi)o.pi={};
+ var wrap=el("div"),cur=o.pi[id]||[],n=mealPro(o,id);
+ var hd=el("div","ttl");
+ hd.appendChild(el("span",null,"🍗 اللي أكلته فعلاً"));
+ hd.appendChild(el("span","kv",n?("<b style='color:var(--acid)'>"+n+" ج بروتين</b>"):"مفيش تسجيل"));
+ wrap.appendChild(hd);
+ if(cur.length){var lst=el("div","pills");
+  cur.forEach(function(k,i){var b=el("button","pill on",esc(foodT(k))+" ✕");
+   b.onclick=function(){o.pi[id].splice(i,1);save();render();};lst.appendChild(b);});
+  wrap.appendChild(lst);}
+ var key="pk_"+id;
+ var tg=el("button","btn"+(open[key]?" p":""),open[key]?"اقفل القايمة":"+ ضيف أكل");
+ tg.onclick=function(){open[key]=!open[key];render();};
+ var q=el("div","qrow");q.appendChild(tg);wrap.appendChild(q);
+ if(open[key]){var g=el("div","pills");
+  FOODS.forEach(function(f){var b=el("button","pill",esc(f.t)+" <b>"+f.g+"</b>");
+   b.onclick=function(){if(!o.pi[id])o.pi[id]=[];o.pi[id].push(f.k);save();render();};
+   g.appendChild(b);});
+  wrap.appendChild(g);
+  wrap.appendChild(el("div","kv","دوس على كل حاجة أكلتها — لو أكلت ٤ بيضات دوس «بيضة» ٤ مرات. الأرقام تقديرية والمهم تكون ثابتة."));}
+ return wrap;}
+
 /* خانة «كلت بدالها إيه» — نص حر، بيتحفظ مع اليوم */
 function subInput(o,m,dt){
  var wrap=el("div","subwrap"),i=document.createElement("input");
@@ -936,8 +994,13 @@ function scHome(){
 
  var pc=el("div","card");
  pc.appendChild(el("div","ttl","🥩 هدف البروتين النهارده"));
- pc.appendChild(el("div","kn",PROT_LO+"–"+PROT_HI+" ج"));
- pc.appendChild(el("div","kv","الهدف العملي · النطاق البحثي على كتلتك الصافية ("+LBM+" كجم) = "+Math.round(LBM*2.3)+"–"+Math.round(LBM*3.1)+" ج"));
+ var got=dayPro(o);
+ pc.appendChild(el("div","kn",got+" / "+PROT_LO+"–"+PROT_HI+" ج"));
+ pc.appendChild(el("div","bar","<i style='width:"+Math.min(100,got/PROT_LO*100)+"%'></i>"));
+ if(got===0)pc.appendChild(el("div","note","<b>سجّل أكلك من شاشة «الأكل»</b> — دوس على اللي أكلته والبروتين بيتجمع لوحده. من غير الرقم ده مفيش طريقة تعرف إنك ناقص."));
+ else if(got<PROT_LO)pc.appendChild(el("div","note bad","<b>ناقص "+(PROT_LO-got)+" جرام.</b> أسرع حل: سكوب واي (٢٤) · علبة تونة (٢٥) · ٣ بيضات (١٨) · زبادي يوناني (١٧)."));
+ else pc.appendChild(el("div","note ok","<b>وصلت الهدف.</b> ده اللي بيحمي عضلك وإنت في عجز."));
+ pc.appendChild(el("div","kv","الهدف العملي · النطاق على كتلتك الصافية ("+LBM+" كجم) = "+Math.round(LBM*2.3)+"–"+Math.round(LBM*3.1)+" ج"));
  pc.appendChild(el("div","note","<b>مش محتاج تزنه.</b> بيضة ≈ ٦ ج • كوب فول ≈ ١٣ ج • نص فرخة ≈ ٦٠ ج • علبة تونة ≈ ٢٥ ج • سكوب واي ≈ ٢٤ ج • كوب لبن ≈ ٨ ج • علبة زبادي ≈ ٧ ج."));
  w.appendChild(pc);
 
@@ -1201,7 +1264,8 @@ function scFood(){
   r.appendChild(b);r.appendChild(el("p",null,"<b>"+esc(m.t)+"</b><small>"+esc(m.k)+"</small>"));
   c2.appendChild(r);
   var ul=el("ul","cues");m.o.forEach(function(x){ul.appendChild(el("li",null,x));});
-  c2.appendChild(ul);c2.appendChild(subInput(o,m,dt));w.appendChild(c2);});
+  c2.appendChild(ul);c2.appendChild(subInput(o,m,dt));
+  c2.appendChild(proPicker(o,m.id,dt));w.appendChild(c2);});
  var dayc=el("div","card");
  dayc.appendChild(el("div","ttl","🧮 حسبة اليوم"));
  dayc.appendChild(el("div","mini",
@@ -1216,7 +1280,7 @@ function scFood(){
 
  var supc=el("div","card");
  supc.appendChild(el("div","ttl","💊 المكملات — الشغال والمعلّق"));
- var SUP=[["Enera Collagen","كيس في ٢٠٠-٢٥٠ مل مية · مع شيك الـ٦م أو مع الفطار",1,"⚠️ صفر من ٥ أيام متسجلة — العلبتين بيعدّوا وإنت مش بتاخدها"],
+ var SUP=[["Enera Collagen","اتشالت من القايمة اليومية — ٢٥ سبتمبر",-1,"مفيش دليل يُذكر إنها بتحل طقطقة من غير ألم، وجرعتها ٨ ج مش ١٥. خدها لو صادفتك لحد ما العلبتين يخلصوا، ومتشتريش تاني"],
   ["NOW Daily Vits","كبسولة مع الفطار ١٢ظ",1,"كمّل عادي"],
   ["Whey Protein","نص سكوب ٦م · سكوب ونص ٨:٤٥ في الجيم · سكوب ٥-٦م أيام الراحة",1,"بقى مصدر البروتين الأساسي بعد إلغاء البار"],
   ["Creatine Monohydrate","٣-٥ ج يومياً مع الشيك — حتى أيام الراحة",1,"مفيش تحميل ومفيش توقيت مقدس. بيحافظ على العضل وإنت في عجز — ورجلك تحت المعياري"],

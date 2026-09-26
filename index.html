@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v4.9 · ٢٦ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v5.0 · ٢٦ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -1063,6 +1063,26 @@ function scHome(){
  tb.onclick=function(){var v=parseFloat(ti.value);if(v>30){S.th[ymd(dt)]=v;save();render();}};
  q5.appendChild(ti);q5.appendChild(tb);sw.appendChild(q5);
  if(lth)sw.appendChild(el("div","kv","الفخذ عند أعرض نقطة، واقف ووزنك على الرجلين. <b>ده مؤشر العضل:</b> لو الفخذ ثابت أو بيكبر والوسط بينزل — إنت ماشي صح بالظبط."));
+ /* مسح قياس غلط — كان ناقص خالص */
+ var MSETS=[["ws",S.ws,"وسط"],["ch",S.ch,"صدر"],["hp",S.hp,"ورك"],["th",S.th,"فخذ"],["w",S.w,"وزن"]];
+ var anyM=false;MSETS.forEach(function(m){if(Object.keys(m[1]).length)anyM=true;});
+ if(anyM){
+  var mk2=el("div","card");
+  mk2.appendChild(el("div","ttl","<span>🗑️ القياسات المسجلة</span><span class='more'>"+(open.msr?"▲ اقفل":"▼ اعرض وامسح")+"</span>"));
+  mk2.style.cursor="pointer";
+  mk2.onclick=function(e){if(e.target.tagName==="BUTTON")return;open.msr=!open.msr;render();};
+  if(open.msr){
+   MSETS.forEach(function(m){
+    var ks=Object.keys(m[1]).sort().reverse();if(!ks.length)return;
+    mk2.appendChild(el("div","grp",m[2]));
+    var g=el("div","pills");
+    ks.slice(0,8).forEach(function(k){
+     var b=el("button","pill",fdm(k)+": <b>"+m[1][k]+"</b> ✕");
+     b.onclick=function(){delete m[1][k];checkBadges();save();render();};
+     g.appendChild(b);});
+    mk2.appendChild(g);});
+   mk2.appendChild(el("div","kv","دوس على أي رقم عشان تمسحه، وبعدها دخّله صح من الخانات فوق."));}
+  w.appendChild(mk2);}
  var lhp=lastHip();
  var q3=el("div","qrow"),hi=document.createElement("input");
  hi.type="number";hi.step="0.5";hi.placeholder=lhp?("الورك "+lhp+" سم"):"الورك سم";
@@ -1086,7 +1106,8 @@ function scHome(){
  var ph=phase(),sc=el("div","card");
  sc.appendChild(el("div","ttl","<span>🏋️ المرحلة "+ph.n+"</span><span class='kv'>"+ph.sess+" / "+PHASE_SESS+" تمرينة</span>"));
  sc.appendChild(el("div","bar","<i style='width:"+Math.min(100,(ph.sess/PHASE_SESS)*100)+"%'></i>"));
- sc.appendChild(el("div","kv","٤ أسابيع · فاضل "+ph.left+" يوم في المرحلة · إجمالي "+sessions()+" تمرينة من البداية"));
+ sc.appendChild(el("div","kv","من <b>"+fmtD(ph.start)+"</b> لـ<b>"+fmtD(ph.end)+"</b> · فاضل "+ph.left+" يوم · إجمالي "+sessions()+" تمرينة من البداية"));
+ sc.appendChild(el("div","kv","<b>المرحلة ٤ أسابيع</b> — في آخرها InBody ومراجعة كاملة، والأهداف بتتصفّر وتتكتب من جديد على نتايجك."));
  w.appendChild(sc);
 
  var pc=el("div","card");
@@ -1504,6 +1525,15 @@ function scProg(){
     (ar!=null&&ar<1?" <b>والراحة قصيرة جداً</b> — الأوزان اللي بتقفزها ممكن تكون مضخّمة، خد ٩٠-١٢٠ ثانية على الحركات التقيلة.":"")));}}
  w.appendChild(tc);
 
+ var sts=[];Object.keys(S.d).sort().reverse().forEach(function(k){var t=timing(k);if(t&&t.valid)sts.push(t.start);});
+ if(sts.length>=2){var sorted=sts.slice().sort(function(a,b){return a-b;});
+  var med=sorted[Math.floor(sorted.length/2)],mn=sorted[0],mx=sorted[sorted.length-1];
+  var gc=el("div","card");
+  gc.appendChild(el("div","ttl","<span>🕘 ميعاد تمرينك الحقيقي</span><span class='kv'>"+sts.length+" تمرينة</span>"));
+  gc.appendChild(el("div","kn",hhmm(med)));
+  gc.appendChild(el("div","kv","المدى: "+hhmm(mn)+" لـ"+hhmm(mx)+" · الوسيط هو اللي بتتبني عليه مواعيد الأكل"));
+  gc.appendChild(el("div","note","كل تمرينة بتضيف دقة للرقم ده. لما يستقر، بظبّط عليه وجبة ما قبل الجيم وشيك ما بعدها."));
+  w.appendChild(gc);}
  var pp=pushPull(1),pc2=el("div","card");
  pc2.appendChild(el("div","ttl","<span>⚖️ دفع مقابل سحب</span><span class='kv'>آخر ٧ أيام</span>"));
  pc2.appendChild(el("div","mini","دفع <b>"+pp.push+"</b> مجموعة · سحب <b>"+pp.pull+"</b> مجموعة"+
@@ -1919,6 +1949,12 @@ save();
  if(ot&&ot.ex&&pt&&pt.ex){var keep={};pt.ex.forEach(function(x){keep[x.k]=1;});
   for(var k in ot.ex)if(!keep[k]&&empty(ot.ex[k]))delete ot.ex[k];}
  S.v=5;})();
+/* v5 ← v6 (٢٦ سبتمبر): رقم اتكتب في خانة الفخذ وهو الورك.
+   فخذ أكبر من ٨٥ سم عند واحد فخذه ٦٠ = الرقم اتحط في الخانة الغلط. */
+(function v6(){
+ if(S.v>=6)return;
+ for(var k in S.th){if(S.th[k]>85&&!S.hp[k]){S.hp[k]=S.th[k];delete S.th[k];}}
+ S.v=6;})();
 save();
 checkBadges();render();
 try{showPop();}catch(e){}   /* التنبيه اليومي — مرة واحدة كل يوم */

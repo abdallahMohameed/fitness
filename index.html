@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v5.4 · ٢٨ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v5.5 · ٢٨ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -1565,9 +1565,13 @@ function progHint(x,before){
   return "⬆️ <b>جرّب "+(top+inc)+" النهارده</b> (أو أقرب رقم أعلى على الجهاز) — خلّصت كل المجموعات و"+top+" اتكرر "+cnt+" مرات";}
  return "➡️ ثبّت على "+top+" لحد ما يتكرر في مجموعتين — وبعدها زوّد";}
 
+/* خطة اليوم: لو اخترت تبدّل (راحة، أو تمرين يوم تاني) بياخد اختيارك، غير كده يوم الأسبوع.
+   ده اختيار منك إنت — مش التطبيق بيقرر. */
+function planFor(dt){var o=S.d[ymd(dt)],k=(o&&o.swap!=null)?o.swap:dt.getDay();return PLAN[k];}
+
 /* الكارديو بيتجمع من الدقايق الفعلية. لو مفيش دقايق مكتوبة والتمرين متعلّم ✓، بياخد رقم الخطة. */
 function recalcCardio(dt){
- var o=day(dt),p=PLAN[dt.getDay()],tot=0;
+ var o=day(dt),p=planFor(dt),tot=0;
  if(p&&p.ex)p.ex.forEach(function(x){
   if(!x.cardio)return;
   var st=o.ex[x.k];if(!st)return;
@@ -1653,7 +1657,7 @@ function cardMove(dt,lbl){
 /* ===== التنبيه اليومي: بيطلع أول ما تفتح التطبيق كل يوم، ومرة واحدة بس =====
    الفكرة: أهم ٣-٤ حاجات النهارده تبقى قدامك قبل ما تغرق وسط الشاشة. */
 function todayBrief(){
- var dt=today(),o=day(dt),p=PLAN[dt.getDay()],out=[];
+ var dt=today(),o=day(dt),p=planFor(dt),out=[];
 
  if(p&&p.key)out.push(["🔥","<b>كارديو الفترات ٤٠ دقيقة — ده الحدث الرئيسي النهارده.</b>",
   "لو الوقت ضاق اقص من الحديد مش من الكارديو، أو اعمل ٤ جولات بدل ٨"]);
@@ -1691,7 +1695,7 @@ function showPop(){
  if(o.seen)return;
  var items=todayBrief();
  if(!items.length){o.seen=true;save();return;}
- var p=PLAN[dt.getDay()],ov=el("div","pop"),bx=el("div","popin");
+ var p=planFor(dt),ov=el("div","pop"),bx=el("div","popin");
  bx.appendChild(el("div","popd",esc(fmtD(dt))+" · "+esc(DOWN[dt.getDay()])));
  bx.appendChild(el("div","popt",p&&p.t?esc(p.t):"يوم قياس وراحة"));
  items.forEach(function(x){
@@ -1831,7 +1835,7 @@ function cardWater(dt,lbl){
 
 /* ===== النهارده ===== */
 function scHome(){
- var w=el("div"),dt=today(),o=day(dt),p=PLAN[dt.getDay()];
+ var w=el("div"),dt=today(),o=day(dt),p=planFor(dt);
  var ms=missed();
  if(ms.length){var mc=el("div","card");
   mc.appendChild(el("div","ttl","⏪ أيام لسه ماتسجلتش"));
@@ -2055,7 +2059,21 @@ function scHome(){
 
 /* ===== التمرين ===== */
 function scTrain(){
- var w=el("div"),dt=curDate(),p=PLAN[dt.getDay()],o=day(dt);
+ var w=el("div"),dt=curDate(),p=planFor(dt),o=day(dt);
+ /* بدّل تمرين اليوم — راحة، أو تمرين يوم تاني (مثلاً لو ريّحت امبارح) */
+ var swc=el("div","card");
+ var DN=["الأحد","الاتنين","التلات","الأربع","الخميس","الجمعة","السبت"];
+ var nat=dt.getDay(),cur=(o.swap!=null)?o.swap:nat;
+ swc.appendChild(el("div","ttl","<span>🔄 "+(o.swap!=null?"<b style='color:var(--acid)'>النهارده بدّلت لتمرين "+DN[cur]+"</b>":"تمرين النهارده")+"</span><span class='more'>"+(open.swp?"▲":"▼ بدّل")+"</span>"));
+ swc.style.cursor="pointer";swc.onclick=function(e){if(e.target.tagName==="BUTTON")return;open.swp=!open.swp;render();};
+ if(open.swp){var sr=el("div","pills");
+  [[6,"😴 راحة"],[0,DN[0]],[1,DN[1]],[2,DN[2]],[3,DN[3]],[4,DN[4]],[5,DN[5]]].forEach(function(x){
+   var b=el("button","pill"+(cur===x[0]?" on":""),x[1]+(x[0]===nat?" (الأصلي)":""));
+   b.onclick=function(){if(x[0]===nat)delete o.swap;else o.swap=x[0];open.swp=false;save();render();};
+   sr.appendChild(b);});
+  swc.appendChild(sr);
+  swc.appendChild(el("div","kv","لو ريّحت يوم، اعمل تمرينه تاني يوم من هنا — والتسجيل بيتحفظ على التاريخ الصح."));}
+ w.appendChild(swc);
  var nav=el("div","wknav");
  var pv=el("button","wkbtn","→");pv.setAttribute("aria-label","الأسبوع اللي فات");
  pv.onclick=function(){weekOff--;open={};render();};

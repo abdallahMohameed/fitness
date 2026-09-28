@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v5.3 · ٢٨ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v5.4 · ٢٨ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -784,19 +784,6 @@ var EXLIB={
 "لو عملت الضغط، اعمل ده — عشان الكتف مايتعبش من الدفع لوحده"
 ],
 "alt": "تجديف بالكابل في الجيم"
-},
-"Plank_Shoulder_Taps": {
-"ar": "بلانك ديناميك (لمس الكتف)",
-"en": "Dynamic Plank · Shoulder Taps",
-"img": "Plank",
-"nw": true,
-"fx": "بلانك بيتحرك — بيشد الوسط ضد اللف، وده اللي بيضيّق الخصر",
-"cues": [
-"وضع ضغط، ورجلك مفتوحة أعرض من كتفك عشان التوازن",
-"المس كتفك بالإيد التانية ببطء — <b>حوضك مايتحركش</b> ولا يلف",
-"لو الكتف طقطق فيه — ارجع للبلانك الثابت"
-],
-"alt": "بلانك ثابت"
 }
 };
 
@@ -988,6 +975,12 @@ var PLAN={
 "bx": true
 },
 {
+"k": "Bottle_Row",
+"sets": 4,
+"reps": "١٥",
+"bx": true
+},
+{
 "g": "٣ — عرض الكتف",
 "k": "Side_Lateral_Raise",
 "sets": 3,
@@ -1117,6 +1110,11 @@ var PLAN={
 "reps": "١٠-١٢"
 },
 {
+"k": "Seated_Cable_Rows",
+"sets": 3,
+"reps": "١٠-١٢"
+},
+{
 "k": "Reverse_Machine_Flyes",
 "sets": 3,
 "reps": "١٢-١٥"
@@ -1133,9 +1131,9 @@ var PLAN={
 "reps": "١٥"
 },
 {
-"k": "Plank_Shoulder_Taps",
+"k": "Plank",
 "sets": 3,
-"reps": "٢٠ لمسة"
+"reps": "٣٠-٤٥ ثانية"
 },
 {
 "k": "Standing_Cable_Wood_Chop",

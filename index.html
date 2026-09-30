@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v5.5 · ٢٨ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v5.6 · ٣٠ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -266,7 +266,7 @@ var DOWN=["الأحد","الاتنين","التلات","الأربعاء","ال�
 function E(o){return o;}
 /* مكتبة التمارين — مكان واحد لكل تمرين. أي مراجعة للكلام بتتعمل هنا بس.
    fx = أثره عليك (تحت الاسم) · cues[0] = أهم نقطة (💡 ظاهرة) · cues[1..] جوه الشرح */
-var COACH_DATE="٢٨ سبتمبر";   /* آخر مراجعة من Claude */
+var COACH_DATE="٣٠ سبتمبر";   /* آخر مراجعة من Claude */
 var EXLIB={
 "Warmup_Shoulder": {
 "ar": "إحماء الكتف",
@@ -319,7 +319,7 @@ var EXLIB={
 ],
 "alt": "تجديف بالماكينة",
 "tg": "٢٧ × ٣",
-"note": "من ١٨ لـ٣٢ في أسبوع. السحب أأمن على كتفك من الدفع — بس ثبّت ٢٧ في التلاتة قبل ٣٢."
+"note": "اليوم اللي بعد ما قفز من ١٨ لـ٣٢، ضهرك وجعك ناحية الكتف اليمين. ثبّت ٢٧ في التلاتة."
 },
 "One-Arm_Dumbbell_Row": {
 "ar": "تجديف دامبل بذراع",
@@ -420,7 +420,7 @@ var EXLIB={
 "مفيش جري — على المشاية زوّد الميل مش السرعة"
 ],
 "alt": "مشاية مائلة: سرعة ٥ وميل ١٠-١٢٪",
-"note": "الأحد صفر والخميس صفر. آخر أسبوعين ٧٥–١٠٠ دقيقة من ١٦٠ — أضعف محور عندك."
+"note": "يوم الرجل ١٢ دقيقة، والأحد صفر. آخر أسبوعين ٧٥–١٠٠ من ١٦٠ — أضعف محور عندك."
 },
 "Chest_Doorway_Stretch": {
 "ar": "إطالة الصدر على الباب",
@@ -446,7 +446,7 @@ var EXLIB={
 ],
 "alt": "جسر المؤخرة على الأرض",
 "tg": "١٢.٥ × ٣",
-"note": "١٠ كجم خفيف على أقوى عضلة في جسمك."
+"note": "آخر مرة ١٠ ← ١٢.٥ ← ١٢.٥. خلّي التلاتة ١٢.٥ وبعدين ١٥."
 },
 "Romanian_Deadlift": {
 "ar": "الرفعة الرومانية",
@@ -458,7 +458,8 @@ var EXLIB={
 "انزل لحد ما تحس شد ورا الفخذ — مش لحد الأرض"
 ],
 "alt": "بدامبلين",
-"tg": "١٧.٥"
+"tg": "٢٠ × ٣",
+"note": "طلعت ٢٠ (+٣٣٪). ثبّت — ضهرك لسه طالع من وجع، والرومانية بتحمّل الضهر كله."
 },
 "Lying_Leg_Curls": {
 "ar": "ثني الرجل راقد",
@@ -470,8 +471,7 @@ var EXLIB={
 "انزل في ٣ ثواني"
 ],
 "alt": "ثني الرجل قاعد",
-"tg": "٣١ × ٣",
-"note": "آخر مرة مجموعتين بس."
+"tg": "٣١ × ٣"
 },
 "Leg_Press": {
 "ar": "ضغط الرجل",
@@ -483,7 +483,8 @@ var EXLIB={
 "متقفلش ركبتك فوق"
 ],
 "alt": "ضغط رجل أفقي",
-"tg": "٨٢ × ٣"
+"tg": "٨٢ ← آخر مجموعتين ٩١",
+"note": "٩١ في آخر مجموعة — أعلى رقم عندك. الرجل أضعف جزء، وده التمرين اللي بيحرّكها."
 },
 "Thigh_Abductor": {
 "ar": "تبعيد الفخذ",
@@ -507,7 +508,7 @@ var EXLIB={
 "ركبتك شبه مفرودة"
 ],
 "alt": "على ماكينة الرجل",
-"tg": "٢٠ × ٣"
+"tg": "٢٠ ← آخر مجموعتين ٢٥"
 },
 "Leg_Extensions": {
 "ar": "مد الرجل",
@@ -519,8 +520,7 @@ var EXLIB={
 "انزل ببطء"
 ],
 "alt": "اشطبه لو حسيت أي شد في الركبة",
-"tg": "٤٨ × ٣ — مش أكتر",
-"note": "من ٢٩ لـ٤٨ في أسبوع. ثبّت حتى لو سهل."
+"tg": "٤٨ × ٣ — مش أكتر"
 },
 "Dead_Bug": {
 "ar": "الحشرة الميتة",
@@ -981,6 +981,12 @@ var PLAN={
 "bx": true
 },
 {
+"k": "Bottle_Row",
+"sets": 4,
+"reps": "١٥",
+"bx": true
+},
+{
 "g": "٣ — عرض الكتف",
 "k": "Side_Lateral_Raise",
 "sets": 3,
@@ -1101,6 +1107,11 @@ var PLAN={
 {
 "g": "كتف",
 "k": "Leverage_Shoulder_Press",
+"sets": 3,
+"reps": "١٠-١٢"
+},
+{
+"k": "Seated_Cable_Rows",
 "sets": 3,
 "reps": "١٠-١٢"
 },
@@ -2751,7 +2762,7 @@ save();
   for(var m in o.meal||{})if(o.meal[m])return true;
   for(var u in o.sup||{})if(o.sup[u])return true;
   for(var b in o.sub||{})if(o.sub[b])return true;
-  return !!(o.water||o.cardio||o.med||o.sh!=null);}
+  return !!(o.water||o.cardio||o.med||o.sh!=null||o.swap!=null);}
  for(var k in S.d){
   if(k===TODAY)continue;
   if((k<START||k>TODAY)&&!dayInfo(S.d[k]))delete S.d[k];}

@@ -205,7 +205,7 @@ var LBM=56.1;  /* الكتلة الصافية — البروتين بيتحسب 
 var MODE="memory",MEM={};
 try{var ls=window["local"+"Storage"];ls.setItem("__p","1");ls.removeItem("__p");MODE="local";}catch(e){}
 var KEY="fit62";
-var APP_V="v5.7 · ٣٠ سبتمبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
+var APP_V="v5.8 · ٣ أكتوبر ٢٠٢٦";   /* كل push = رقم جديد هنا */
 function readAll(){if(MODE==="local"){try{var v=window["local"+"Storage"].getItem(KEY);return v?JSON.parse(v):null;}catch(e){}}return MEM[KEY]||null;}
 function writeAll(o){if(MODE==="local"){try{window["local"+"Storage"].setItem(KEY,JSON.stringify(o));return;}catch(e){}}MEM[KEY]=o;}
 var BKEY="fit62_bak";
@@ -1274,12 +1274,13 @@ var FOODS=[
 ];
 function foodG(k){for(var i=0;i<FOODS.length;i++)if(FOODS[i].k===k)return FOODS[i].g;return 0;}
 function foodT(k){for(var i=0;i<FOODS.length;i++)if(FOODS[i].k===k)return FOODS[i].t;return k;}
-function mealPro(o,id){var a=(o.pi||{})[id]||[],n=0;a.forEach(function(k){n+=foodG(k);});return n;}
+function mealPro(o,id){var a=(o.pi||{})[id]||[],n=0;a.forEach(function(k){n+=foodG(k);});
+ if(!a.length&&o.qg&&o.qg[id]!=null)n=o.qg[id];return n;}
 function dayPro(o){var n=0;MEAL_IDS.forEach(function(m){n+=mealPro(o,m);});return n;}
 var WHEY_OK=true;    /* ١٩ سبتمبر: قرار إلغاء التحاليل — الواي والكرياتين بيبدأوا */
 
 var MEALS_GYM=[
- {id:"m1",t:"١٢ ظهراً — الفطار",k:"~٤٥٠ سعرة · ٢٧ ج بروتين",o:[
+ {id:"m1",t:"١ ظهراً — الفطار",k:"~٤٥٠ سعرة · ٢٧ ج بروتين",o:[
   "<b>٤ بيض مسلوق أو أومليت من غير زيت + نص رغيف بلدي + خيار وطماطم وفلفل</b>",
   "<b>وحبة Daily Vits مع الوجبة دي</b> — مش الصبح على معدة فاضية.",
   "<b>ممنوع اللبن مع الفطار</b> — بيقلّب المعدة مع البيض."]},
@@ -1301,7 +1302,7 @@ var MEALS_GYM=[
 ];
 
 var MEALS_REST=[
- {id:"m1",t:"١٢ ظهراً — الفطار",k:"~٤٥٠ سعرة · ٢٧ ج بروتين",o:[
+ {id:"m1",t:"١ ظهراً — الفطار",k:"~٤٥٠ سعرة · ٢٧ ج بروتين",o:[
   "<b>٤ بيض مسلوق أو أومليت من غير زيت + نص رغيف بلدي + خضار</b>",
   "<b>+ كيس Enera + حبة Daily Vits</b>",
   "<b>ممنوع اللبن مع البيض.</b>"]},
@@ -1315,7 +1316,7 @@ var MEALS_REST=[
   "أو بار تاني بدل العشا — <b>مش الاتنين</b>."]}
 ];
 
-function isRestDay(dt){var d=dt.getDay();return d===2||d===6;}  /* تلات وسبت */
+function isRestDay(dt){var p=planFor(dt);return !p||!p.ex||!!p.light;}  /* بيحترم التبديل: راحة أو يوم البيت */
 function mealsFor(dt){return isRestDay(dt)?MEALS_REST:MEALS_GYM;}
 
 var BADGES=[
@@ -1643,6 +1644,59 @@ function cardMove(dt,lbl){
  c.appendChild(el("div","kv","إنت شغال from home. القعدة المتواصلة بتقفل الحوض والرجل وبترفع دهون البطن حتى لو بتتمرن — التقطيع هو العلاج."));
  return c;}
 
+/* ===== يومك في ٣٠ ثانية =====
+   عبدالله بيفتح التطبيق في الجيم بس (٣/١٠) — فالتسجيل اليومي اتربط باللحظة دي.
+   تقدير مش عدّ: «زي الخطة» = بروتين الوجبة المخطط · «أقل» = النص · «اتسابت» = صفر.
+   لو استخدم عدّاد البروتين التفصيلي لوجبة، هو اللي بيتحسب. */
+var QP_GYM={m1:37,m2:55,m3:12,m4:36},QP_REST={m1:37,m2:55,m3:32,m4:40};
+var QL_GYM={m1:"الفطار",m2:"الغدا",m3:"قبل الجيم",m4:"بعد الجيم"},QL_REST={m1:"الفطار",m2:"الغدا",m3:"العصر",m4:"العشا"};
+function recapOf(dt){return S.d[ymd(dt)]||{};}
+function recapDone(o){var m=o.qm||{};return MEAL_IDS.every(function(k){return m[k]||(o.pi&&o.pi[k]&&o.pi[k].length);})&&o.supq&&o.water>0&&o.sl!=null;}
+function recapEmpty(o){var m=o.qm||{},any=false;MEAL_IDS.forEach(function(k){if(m[k]||(o.meal&&o.meal[k])||(o.pi&&o.pi[k]&&o.pi[k].length))any=true;});return !any&&!o.supq&&!(o.water>0);}
+function recapBlock(dt,lbl,withSleep){
+ var o0=recapOf(dt),Q=isRestDay(dt)?QP_REST:QP_GYM,QL=isRestDay(dt)?QL_REST:QL_GYM,b=el("div");
+ b.appendChild(el("div","grp",lbl));
+ MEAL_IDS.forEach(function(k){
+  var r=el("div","qrow");r.style.alignItems="center";r.style.flexWrap="wrap";
+  var cur=(o0.qm||{})[k],det=o0.pi&&o0.pi[k]&&o0.pi[k].length;
+  r.appendChild(el("span","kv",QL[k]+(det?" · <b>مسجّل بالتفصيل</b>":"")));
+  [["plan","زي الخطة"],["less","أقل"],["skip","اتسابت"]].forEach(function(x){
+   var bt=el("button","pill"+(cur===x[0]?" on":""),x[1]);
+   bt.onclick=function(){var o=day(dt);if(!o.qm)o.qm={};if(!o.qg)o.qg={};
+    if(o.qm[k]===x[0]){delete o.qm[k];delete o.qg[k];}
+    else{o.qm[k]=x[0];o.qg[k]=x[0]==="plan"?Q[k]:(x[0]==="less"?Math.round(Q[k]/2):0);o.meal[k]=x[0]!=="skip";}
+    checkBadges();save();render();};
+   r.appendChild(bt);});
+  b.appendChild(r);});
+ var r2=el("div","qrow");r2.style.flexWrap="wrap";
+ var sb=el("button","pill"+(o0.supq?" on":""),"💊 المكملات زي العادة"+(o0.supq?" ✓":""));
+ sb.onclick=function(){var o=day(dt);o.supq=!o.supq;["vits","whey","creatine"].forEach(function(x){o.sup[x]=o.supq;});checkBadges();save();render();};
+ r2.appendChild(sb);b.appendChild(r2);
+ var r3=el("div","qrow");r3.style.alignItems="center";r3.style.flexWrap="wrap";
+ r3.appendChild(el("span","kv","💧 مية (لتر)"));
+ ["½","١","١½","٢","٢½","٣"].forEach(function(x,i){
+  var bt=el("button","pill"+((o0.water||0)===i+1?" on":""),x);
+  bt.onclick=function(){var o=day(dt);o.water=(o.water===i+1)?0:i+1;save();render();};r3.appendChild(bt);});
+ b.appendChild(r3);
+ if(withSleep){var r4=el("div","qrow");r4.style.alignItems="center";r4.style.flexWrap="wrap";
+  r4.appendChild(el("span","kv","😴 نمت امبارح"));
+  [[4.5,"أقل من ٥"],[5.5,"٥–٦"],[7,"٧"],[8.5,"٨+"]].forEach(function(x){
+   var bt=el("button","pill"+(o0.sl===x[0]?" on":""),x[1]);
+   bt.onclick=function(){var o=day(dt);if(o.sl===x[0])delete o.sl;else o.sl=x[0];save();render();};r4.appendChild(bt);});
+  b.appendChild(r4);}
+ return b;}
+function cardRecap(dt){
+ var o=recapOf(dt),c=el("div","card"),done=recapDone(o),key="rc_"+ymd(dt);
+ var y=addD(dt,-1),yo=recapOf(y),showY=recapEmpty(yo)&&ymd(y)>="2026-09-13";
+ var t=el("div","ttl","<span>📋 يومك في ٣٠ ثانية"+(done?" ✓":"")+"</span><span class='kv'>بروتين <b>"+dayPro(o)+"</b> ج</span>");
+ c.appendChild(t);
+ if(done&&!open[key]){var eb=el("button","btn","عدّل");eb.onclick=function(){open[key]=true;render();};
+  var q=el("div","qrow");q.appendChild(el("span","kv","اتسجل. التفاصيل في شاشة الأكل لو حبيت."));q.appendChild(eb);c.appendChild(q);return c;}
+ c.appendChild(el("div","kv","تقدير سريع — زي الخطة · أقل · اتسابت. <b>تعمله بين المجموعات.</b>"));
+ c.appendChild(recapBlock(dt,"النهارده",true));
+ if(showY)c.appendChild(recapBlock(y,"وامبارح؟ (كان فاضي)",false));
+ return c;}
+
 /* ===== التنبيه اليومي: بيطلع أول ما تفتح التطبيق كل يوم، ومرة واحدة بس =====
    الفكرة: أهم ٣-٤ حاجات النهارده تبقى قدامك قبل ما تغرق وسط الشاشة. */
 function todayBrief(){
@@ -1657,6 +1711,8 @@ function todayBrief(){
  if(sn<SUPS.length)out.push(["💊","<b>المكملات لسه ماتسجلتش</b> ("+sn+" من "+SUPS.length+")",
   "سجّل اللي خدته فعلاً — من غيره مفيش استنتاج صحيح"]);
 
+ if(!recapDone(o))out.push(["📋","<b>سجّل يومك في ٣٠ ثانية</b> — أول كارت في الشاشة",
+  "الأكل زي الخطة ولا أقل · المكملات · المية · النوم"]);
  if(photoDue())out.push(["📸","<b>ميعاد صور التقدم</b> — ٤ صور الصبح قبل الأكل",
   "التعليمات في أول شاشة النهارده · وابعتهم في الشات"]);
  if(!(o.mv>0))out.push(["🪑","<b>قوم دقيقة كل ساعة</b> — ودوس +١ في «قمت اتحركت»",
@@ -1848,6 +1904,7 @@ function scHome(){
   :"<b>الهدف ١٦٠ دقيقة في الأسبوع.</b> موزعة على الدراجة بعد الحديد + يوم التحمل + مشي التلات. المشي بيتحسب."));
  w.appendChild(cc);
 
+ w.appendChild(cardRecap(dt));
  var pd=photoDue();
  if(pd){var phc=el("div","card");
   phc.appendChild(el("div","ttl","📸 ميعاد صور التقدم"));
@@ -2063,6 +2120,7 @@ function scTrain(){
   swc.appendChild(sr);
   swc.appendChild(el("div","kv","لو ريّحت يوم، اعمل تمرينه تاني يوم من هنا — والتسجيل بيتحفظ على التاريخ الصح."));}
  w.appendChild(swc);
+ w.appendChild(cardRecap(dt));
  var nav=el("div","wknav");
  var pv=el("button","wkbtn","→");pv.setAttribute("aria-label","الأسبوع اللي فات");
  pv.onclick=function(){weekOff--;open={};render();};
